@@ -1,0 +1,22 @@
+{
+  "settings": "Cài đặt",
+  "general_settings": "CÀI ĐẶT CHUNG",
+  "notifications": "Thông báo",
+  "dark_mode": "Chế độ tối",
+  "system": "HỆ THỐNG",
+  "language": "Ngôn ngữ",
+  "privacy": "Quyền riêng tư",
+  "support": "HỖ TRỢ",
+  "help_center": "Trung tâm trợ giúp",
+  "logout": "Đăng xuất",
+  "logout_confirm": "Đăng xuất?",
+  "logout_desc": "Bạn có chắc chắn muốn kết thúc phiên làm việc hiện tại không?",
+  "confirm_exit": "Xác nhận thoát",
+  "cancel": "Hủy bỏ",
+  "explore": "KHÁM PHÁ",
+  "match": "PHÙ HỢP",
+  "favorite": "YÊU THÍCH",
+  "profile": "CÁ NHÂN",
+  "choose_language": "Chọn ngôn ngữ\ncủa bạn",
+  "choose_language_desc": "Cá nhân hóa trải nghiệm khám phá cà phê với ngôn ngữ bạn cảm thấy thoải mái nhất."
+}

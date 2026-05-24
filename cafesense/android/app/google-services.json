@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "70666178323",
+    "project_id": "cafesense-511b1",
+    "storage_bucket": "cafesense-511b1.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:70666178323:android:5d1453d58b240fa7ed14e6",
+        "android_client_info": {
+          "package_name": "com.cafesense.cafesense"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDHMf9sgxM7t9rn3zPyy0VAYziNOttThrI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

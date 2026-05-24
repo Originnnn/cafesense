@@ -84,3 +84,8 @@ Desktop.ini
 cafesense/analysis_options.yaml.lock
 cafesense/analyze_result.txt
 cafesense/final_analyze.txt
+
+# Java/Android dumps
+*.hprof
+*.dump
+java_pid*.hprof

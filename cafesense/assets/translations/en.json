@@ -1,0 +1,22 @@
+{
+  "settings": "Settings",
+  "general_settings": "GENERAL SETTINGS",
+  "notifications": "Notifications",
+  "dark_mode": "Dark Mode",
+  "system": "SYSTEM",
+  "language": "Language",
+  "privacy": "Privacy Policy",
+  "support": "SUPPORT",
+  "help_center": "Help Center",
+  "logout": "Logout",
+  "logout_confirm": "Logout?",
+  "logout_desc": "Are you sure you want to end the current session?",
+  "confirm_exit": "Confirm Exit",
+  "cancel": "Cancel",
+  "explore": "EXPLORE",
+  "match": "MATCH",
+  "favorite": "FAVORITE",
+  "profile": "PROFILE",
+  "choose_language": "Choose your\nlanguage",
+  "choose_language_desc": "Personalize your coffee discovery experience with the language you are most comfortable with."
+}
