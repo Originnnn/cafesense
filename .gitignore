@@ -1,0 +1,86 @@
+# Flutter
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+build/
+*.apk
+*.ipa
+*.app
+*.elf
+pubspec.lock
+
+# Firebase
+android/google-services.json
+
+# Android
+android/.gradle
+android/local.properties
+android/build
+android/.idea
+android/*.iml
+android/app/debug
+android/app/profile
+android/app/release
+
+# iOS
+ios/Flutter/Flutter.podspec
+ios/Flutter/Flutter.xcconfig
+ios/Flutter/Flutter.framework
+ios/Flutter/Flutter.ephemeralModules
+ios/Flutter/app.flutterconfig
+ios/Pods/
+ios/Podfile.lock
+ios/Flutter/flutter_export_environment.sh
+
+# Web
+web/js/*.js
+web/js/*.js.map
+web/js/*.sources
+
+# Windows
+windows/flutter/ephemeral/
+
+# macOS
+macos/Flutter/Flutter.xcconfig
+macos/Flutter/flutter_export_environment.sh
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*.swn
+*.sublime-workspace
+.DS_Store
+*.iml
+
+# Node.js
+backend/node_modules/
+backend/npm-debug.log
+backend/package-lock.json
+backend/dist/
+backend/.env
+backend/.env.local
+
+# Database
+backend/*.db
+backend/*.sqlite
+*.db-journal
+
+# OS
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Temporary files
+*.log
+*.tmp
+*.bak
+*.swp
+*~
+
+# Analysis
+cafesense/analysis_options.yaml.lock
+cafesense/analyze_result.txt
+cafesense/final_analyze.txt
