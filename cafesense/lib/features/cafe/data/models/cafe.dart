@@ -1,6 +1,7 @@
 class Cafe {
   final String id;
   final String name;
+  final String fullName;
   final String description;
   final String imageUrl;
   final double latitude;
@@ -12,10 +13,25 @@ class Cafe {
   final List<MenuItem> menu;
   final List<Review> reviews;
   final int? matchPercent;
+  final String roastLevel;
+  final String acidity;
+  final String body;
+  final String sweetness;
+  final String process;
+  final String panoramaUrl;
+
+  // Rating fields for AI recommendation
+  final double wifiRating;
+  final double spaceRating;
+  final double outletRating;
+  final double priceRating;
+  final double tasteRating;
+  final double viewRating;
 
   const Cafe({
     required this.id,
     required this.name,
+    this.fullName = '',
     required this.description,
     required this.imageUrl,
     required this.latitude,
@@ -27,12 +43,25 @@ class Cafe {
     required this.menu,
     required this.reviews,
     this.matchPercent,
+    this.roastLevel = '',
+    this.acidity = '',
+    this.body = '',
+    this.sweetness = '',
+    this.process = '',
+    this.wifiRating = 0.0,
+    this.spaceRating = 0.0,
+    this.outletRating = 0.0,
+    this.priceRating = 0.0,
+    this.tasteRating = 0.0,
+    this.viewRating = 0.0,
+    this.panoramaUrl = '',
   });
 
   factory Cafe.fromJson(Map<String, dynamic> json) {
     return Cafe(
       id: json['id'] as String? ?? '',
       name: json['name'] as String? ?? '',
+      fullName: json['fullName'] as String? ?? json['name'] as String? ?? '',
       description: json['description'] as String? ?? '',
       imageUrl: json['imageUrl'] as String? ?? '',
       latitude: (json['latitude'] as num?)?.toDouble() ?? 0.0,
@@ -50,6 +79,18 @@ class Cafe {
               .toList() ??
           const [],
       matchPercent: json['matchPercent'] as int?,
+      roastLevel: json['roastLevel'] as String? ?? '',
+      acidity: json['acidity'] as String? ?? '',
+      body: json['body'] as String? ?? '',
+      sweetness: json['sweetness'] as String? ?? '',
+      process: json['process'] as String? ?? '',
+      wifiRating: (json['wifiRating'] as num?)?.toDouble() ?? 0.0,
+      spaceRating: (json['spaceRating'] as num?)?.toDouble() ?? 0.0,
+      outletRating: (json['outletRating'] as num?)?.toDouble() ?? 0.0,
+      priceRating: (json['priceRating'] as num?)?.toDouble() ?? 0.0,
+      tasteRating: (json['tasteRating'] as num?)?.toDouble() ?? 0.0,
+      viewRating: (json['viewRating'] as num?)?.toDouble() ?? 0.0,
+      panoramaUrl: json['panoramaUrl'] as String? ?? '',
     );
   }
 
@@ -57,6 +98,7 @@ class Cafe {
     return {
       'id': id,
       'name': name,
+      'fullName': fullName,
       'description': description,
       'imageUrl': imageUrl,
       'latitude': latitude,
@@ -68,6 +110,18 @@ class Cafe {
       'menu': menu.map((e) => e.toJson()).toList(),
       'reviews': reviews.map((e) => e.toJson()).toList(),
       'matchPercent': matchPercent,
+      'roastLevel': roastLevel,
+      'acidity': acidity,
+      'body': body,
+      'sweetness': sweetness,
+      'process': process,
+      'wifiRating': wifiRating,
+      'spaceRating': spaceRating,
+      'outletRating': outletRating,
+      'priceRating': priceRating,
+      'tasteRating': tasteRating,
+      'viewRating': viewRating,
+      'panoramaUrl': panoramaUrl,
     };
   }
 }

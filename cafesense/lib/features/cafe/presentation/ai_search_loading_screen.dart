@@ -53,52 +53,18 @@ class _AiSearchLoadingScreenState extends ConsumerState<AiSearchLoadingScreen>
     try {
       final cafeRepo = ref.read(cafeRepositoryProvider);
       
-      // Load matched cafes sorted by matching percentage
-      final List<Cafe> allMatchedCafes = await cafeRepo.getMatchedCafes();
-
-      // Filter matched cafes on client-side based on widget.filters and widget.priceRange
-      final List<Cafe> filteredResults = allMatchedCafes.where((cafe) {
-        // Price filtering
-        int priceLevel = 1;
-        if (cafe.priceLabel == '\$\$') {
-          priceLevel = 2;
-        } else if (cafe.priceLabel == '\$\$\$') {
-          priceLevel = 3;
-        }
-
-        final double minPrice = widget.priceRange.start;
-        final double maxPrice = widget.priceRange.end;
-        if (priceLevel < minPrice || priceLevel > maxPrice) {
-          return false;
-        }
-
-        // Tag filter (if any are selected, we can check if they overlap with space styles or amenities)
-        if (widget.filters.isNotEmpty) {
-          bool matchFilter = false;
-          for (final filter in widget.filters) {
-            final String normFilter = filter.toLowerCase().trim();
-            final bool hasAmenity = cafe.amenities.any((a) => a.toLowerCase().contains(normFilter));
-            final bool hasStyle = cafe.spaceStyle.any((s) => s.toLowerCase().contains(normFilter));
-            
-            if (hasAmenity || hasStyle) {
-              matchFilter = true;
-              break; // OR-based filtering for user friendliness
-            }
-          }
-          if (!matchFilter) {
-            return false;
-          }
-        }
-
-        return true;
-      }).toList();
+      // Load matched cafes sorted by AI matching percentage based on selected filters and price range
+      final List<Cafe> results = await cafeRepo.getAiMatchedCafes(
+        filters: widget.filters,
+        priceRange: widget.priceRange,
+      );
 
       if (!mounted) return;
 
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
           builder: (_) => FilterResultsScreen(
-            results: filteredResults,
+            results: results,
             activeFilters: widget.filters,
           ),
         ),

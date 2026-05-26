@@ -9,6 +9,34 @@ rootProject.buildDir = "../build"
 subprojects { project.buildDir = "${rootProject.buildDir}/${project.name}" }
 subprojects { project.evaluationDependsOn(":app") }
 
+subprojects { prj ->
+    def fixAndroidProject = {
+        if (prj.android.namespace == null) {
+            prj.android.namespace = "com.example." + prj.name.replaceAll(/[^a-zA-Z0-9_]/, '_')
+        }
+        try {
+            def manifestFile = prj.android.sourceSets.main.manifest.srcFile
+            if (manifestFile != null && manifestFile.exists()) {
+                def content = manifestFile.getText("UTF-8")
+                if (content.contains("package=")) {
+                    def updatedContent = content.replaceAll(/\s*package="[^"]*"/, "")
+                    manifestFile.write(updatedContent, "UTF-8")
+                    logger.quiet("Stripped package attribute from: ${manifestFile}")
+                }
+            }
+        } catch (Exception e) {
+            logger.error("Failed to strip package attribute from ${prj.name}: ${e.message}")
+        }
+    }
+
+    prj.pluginManager.withPlugin('com.android.library') {
+        fixAndroidProject()
+    }
+    prj.pluginManager.withPlugin('com.android.application') {
+        fixAndroidProject()
+    }
+}
+
 tasks.register("clean", Delete) {
     delete rootProject.buildDir
 }

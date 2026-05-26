@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cafesense/features/cafe/data/models/cafe.dart';
 import 'cafe_menu_tab.dart';
 import 'cafe_reviews_tab.dart';
+import 'cafe_3d_space_screen.dart';
 
 class CafeDetailScreen extends StatelessWidget {
   final Cafe cafe;
@@ -27,6 +28,23 @@ class CafeDetailScreen extends StatelessWidget {
                   icon: const Icon(Icons.arrow_back),
                   onPressed: () => Navigator.of(context).pop(),
                 ),
+                actions: [
+                  IconButton(
+                    icon: const Icon(Icons.threed_rotation),
+                    tooltip: 'Xem không gian 3D',
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => Cafe3dSpaceScreen(
+                            cafeName: cafe.name,
+                            panoramaUrl: cafe.panoramaUrl,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ],
                 flexibleSpace: FlexibleSpaceBar(
                   background: Stack(
                     fit: StackFit.expand,
@@ -127,7 +145,7 @@ class _OverviewTab extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildActionRow(),
+          _buildActionRow(context),
           const SizedBox(height: 48),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -240,7 +258,7 @@ class _OverviewTab extends StatelessWidget {
     );
   }
 
-  Widget _buildActionRow() {
+  Widget _buildActionRow(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Column(
@@ -297,6 +315,21 @@ class _OverviewTab extends StatelessWidget {
               _buildActionButton(Icons.bookmark_border, 'Lưu'),
               _buildActionButton(Icons.share, 'Chia sẻ'),
               _buildActionButtonPrimary(Icons.directions, 'Chỉ đường'),
+              InkWell(
+                borderRadius: BorderRadius.circular(24),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => Cafe3dSpaceScreen(
+                        cafeName: cafe.name,
+                        panoramaUrl: cafe.panoramaUrl,
+                      ),
+                    ),
+                  );
+                },
+                child: _buildActionButton(Icons.threed_rotation, 'Không gian 3D'),
+              ),
             ],
           ),
         ],

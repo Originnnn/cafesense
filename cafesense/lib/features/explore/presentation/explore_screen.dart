@@ -18,6 +18,8 @@ class ExploreScreen extends ConsumerStatefulWidget {
 
 class _ExploreScreenState extends ConsumerState<ExploreScreen> {
   late Future<List<Cafe>> _cafesFuture;
+  double? _userLatitude;
+  double? _userLongitude;
 
   @override
   void initState() {
@@ -39,12 +41,35 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
           Position position = await Geolocator.getCurrentPosition();
           lat = position.latitude;
           lng = position.longitude;
+          if (mounted) {
+            setState(() {
+              _userLatitude = lat;
+              _userLongitude = lng;
+            });
+          }
         }
       }
     } catch (e) {
       debugPrint('Error getting location: $e');
     }
     return ref.read(cafeRepositoryProvider).getCafes(lat: lat, lng: lng);
+  }
+
+  String _getDistanceText(Cafe cafe) {
+    if (_userLatitude != null && _userLongitude != null) {
+      final double distance = Geolocator.distanceBetween(
+        _userLatitude!,
+        _userLongitude!,
+        cafe.latitude,
+        cafe.longitude,
+      );
+      if (distance >= 1000) {
+        return "${(distance / 1000).toStringAsFixed(1)} km";
+      } else {
+        return "${distance.toStringAsFixed(0)} m";
+      }
+    }
+    return "0.5 km";
   }
 
   void _refreshCafes() {

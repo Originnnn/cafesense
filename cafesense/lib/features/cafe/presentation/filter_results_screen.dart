@@ -285,9 +285,9 @@ class FilterResultsScreen extends StatelessWidget {
   }
 
   Widget _compactResultCard(BuildContext context, Cafe item) {
-    // simple distance calculation from Da Nang center (16.0600, 108.2200)
-    final double dLat = item.latitude - 16.0600;
-    final double dLon = item.longitude - 108.2200;
+    // simple distance calculation from cafes cluster center (15.9770, 108.2653)
+    final double dLat = item.latitude - 15.9770;
+    final double dLon = item.longitude - 108.2653;
     final double dist = math.sqrt(dLat * dLat + dLon * dLon) * 111.0; // ~111km per degree
     final String distanceLabel = '${dist.toStringAsFixed(1)} km';
 
@@ -361,12 +361,14 @@ class FilterResultsScreen extends StatelessWidget {
   IconData _amenityIcon(String key) {
     switch (key.trim().toLowerCase()) {
       case "wifi":
+      case "wifi mạnh":
         return Icons.wifi;
       case "silent":
       case "yên tĩnh":
         return Icons.volume_off;
       case "plug":
       case "sạc điện thoại":
+      case "ổ cắm điện":
         return Icons.power;
       case "coffee":
       case "thức uống đa dạng":
@@ -375,7 +377,16 @@ class FilterResultsScreen extends StatelessWidget {
       case "không gian mở":
         return Icons.park;
       case "non_smoke":
+      case "không hút thuốc":
         return Icons.smoke_free;
+      case "máy lạnh":
+        return Icons.ac_unit;
+      case "chỗ để xe":
+        return Icons.directions_car;
+      case "thức ăn nhẹ":
+        return Icons.restaurant;
+      case "ghế thoải mái":
+        return Icons.chair;
       default:
         return Icons.coffee;
     }

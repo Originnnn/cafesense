@@ -86,10 +86,27 @@ class _ExploreMapScreenState extends ConsumerState<ExploreMapScreen> {
         _isLoading = false;
       });
 
-      _mapController.move(
-        LatLng(position.latitude, position.longitude),
-        14.5,
+      // Calculate distance between user and the center of the cafes cluster (15.9770, 108.2653)
+      final double distance = Geolocator.distanceBetween(
+        position.latitude,
+        position.longitude,
+        15.9770,
+        108.2653,
       );
+
+      // If user is within 15 km of the cafes, center the map on their location.
+      // Otherwise, center the map on the cafes cluster so they can see the pins.
+      if (distance < 15000) {
+        _mapController.move(
+          LatLng(position.latitude, position.longitude),
+          14.5,
+        );
+      } else {
+        _mapController.move(
+          const LatLng(15.9770, 108.2653),
+          13.5,
+        );
+      }
     } catch (e) {
       setState(() {
         _errorMessage = e.toString();
@@ -340,8 +357,8 @@ class _ExploreMapScreenState extends ConsumerState<ExploreMapScreen> {
           FlutterMap(
             mapController: _mapController,
             options: const MapOptions(
-              initialCenter: LatLng(16.0544, 108.2022),
-              initialZoom: 12.4,
+              initialCenter: LatLng(15.9770, 108.2653),
+              initialZoom: 13.5,
               minZoom: 10,
               maxZoom: 18,
             ),
