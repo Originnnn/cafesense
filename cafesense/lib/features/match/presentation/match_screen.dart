@@ -86,7 +86,7 @@ class _MatchScreenState extends ConsumerState<MatchScreen> {
             return SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.only(
-                    top: 88, bottom: 100, left: 24, right: 24),
+                    top: 88, bottom: 120, left: 24, right: 24),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [

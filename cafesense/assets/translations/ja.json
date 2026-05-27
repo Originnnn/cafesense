@@ -1,0 +1,22 @@
+{
+  "settings": "設定",
+  "general_settings": "一般設定",
+  "notifications": "通知",
+  "dark_mode": "ダークモード",
+  "system": "システム",
+  "language": "言語",
+  "privacy": "プライバシーポリシー",
+  "support": "サポート",
+  "help_center": "ヘルプセンター",
+  "logout": "ログアウト",
+  "logout_confirm": "ログアウト？",
+  "logout_desc": "現在のセッションを終了してもよろしいですか？",
+  "confirm_exit": "確認",
+  "cancel": "キャンセル",
+  "explore": "探索",
+  "match": "マッチ",
+  "favorite": "お気に入り",
+  "profile": "プロフィール",
+  "choose_language": "言語を\n選択してください",
+  "choose_language_desc": "最も快適な言語でコーヒー探索体験をカスタマイズしてください。"
+}

@@ -1,23 +1,47 @@
 import "package:flutter/material.dart";
+import "package:flutter_riverpod/flutter_riverpod.dart";
 import "package:google_fonts/google_fonts.dart";
 import "package:cafesense/core/theme/app_colors.dart";
+import "package:cafesense/core/providers/locale_provider.dart";
 
-class LanguageScreen extends StatefulWidget {
+class LanguageScreen extends ConsumerStatefulWidget {
   const LanguageScreen({super.key});
 
   @override
-  State<LanguageScreen> createState() => _LanguageScreenState();
+  ConsumerState<LanguageScreen> createState() => _LanguageScreenState();
 }
 
-class _LanguageScreenState extends State<LanguageScreen> {
-  String _selected = "Tiếng Việt";
+class _LanguageScreenState extends ConsumerState<LanguageScreen> {
+  late String _selected;
 
   final List<_LangItem> _languages = const [
-    _LangItem(name: "Tiếng Việt", subtitle: "VIETNAMESE", flag: "🇻🇳"),
-    _LangItem(name: "English", subtitle: "ENGLISH", flag: "🇬🇧"),
-    _LangItem(name: "Français", subtitle: "FRENCH", flag: "🇫🇷"),
-    _LangItem(name: "日本語", subtitle: "JAPANESE", flag: "🇯🇵"),
+    _LangItem(name: "Tiếng Việt", code: "vi", subtitle: "VIETNAMESE", flag: "🇻🇳"),
+    _LangItem(name: "English", code: "en", subtitle: "ENGLISH", flag: "🇬🇧"),
+    _LangItem(name: "Français", code: "fr", subtitle: "FRENCH", flag: "🇫🇷"),
+    _LangItem(name: "日本語", code: "ja", subtitle: "JAPANESE", flag: "🇯🇵"),
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    final currentLocale = ref.read(localeProvider);
+    _selected = _getLanguageName(currentLocale.languageCode);
+  }
+
+  String _getLanguageName(String code) {
+    switch (code) {
+      case 'vi':
+        return "Tiếng Việt";
+      case 'en':
+        return "English";
+      case 'fr':
+        return "Français";
+      case 'ja':
+        return "日本語";
+      default:
+        return "Tiếng Việt";
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -72,7 +96,10 @@ class _LanguageScreenState extends State<LanguageScreen> {
                   final bool selected = _selected == item.name;
                   return InkWell(
                     borderRadius: BorderRadius.circular(14),
-                    onTap: () => setState(() => _selected = item.name),
+                    onTap: () async {
+                      setState(() => _selected = item.name);
+                      await ref.read(localeProvider.notifier).changeLocale(item.code);
+                    },
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                       decoration: BoxDecoration(
@@ -147,9 +174,10 @@ class _LanguageScreenState extends State<LanguageScreen> {
 }
 
 class _LangItem {
-  const _LangItem({required this.name, required this.subtitle, required this.flag});
+  const _LangItem({required this.name, required this.code, required this.subtitle, required this.flag});
 
   final String name;
+  final String code;
   final String subtitle;
   final String flag;
 }

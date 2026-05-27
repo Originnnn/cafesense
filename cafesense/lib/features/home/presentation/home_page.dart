@@ -27,13 +27,19 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       body: Stack(
         children: [
-          // The selected tab's body
-          IndexedStack(
-            index: _currentIndex,
-            children: _screens,
+          // Smooth animated screen transition
+          AnimatedSwitcher(
+            duration: const Duration(milliseconds: 300),
+            transitionBuilder: (child, animation) {
+              return FadeTransition(opacity: animation, child: child);
+            },
+            child: KeyedSubtree(
+              key: ValueKey<int>(_currentIndex),
+              child: _screens[_currentIndex],
+            ),
           ),
 
-          // Reusable Bottom Navigation overlays the content
+          // Bottom Navigation - always on top with proper pointer events
           Positioned(
             left: 0,
             right: 0,

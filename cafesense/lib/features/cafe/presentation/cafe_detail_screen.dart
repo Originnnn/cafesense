@@ -1,16 +1,36 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cafesense/features/cafe/data/models/cafe.dart';
+import 'package:cafesense/core/providers/favorites_provider.dart';
+import 'package:cafesense/core/providers/history_provider.dart';
 import 'cafe_menu_tab.dart';
 import 'cafe_reviews_tab.dart';
 import 'cafe_3d_space_screen.dart';
 
-class CafeDetailScreen extends StatelessWidget {
+class CafeDetailScreen extends ConsumerStatefulWidget {
   final Cafe cafe;
 
   const CafeDetailScreen({super.key, required this.cafe});
 
   @override
+  ConsumerState<CafeDetailScreen> createState() => _CafeDetailScreenState();
+}
+
+class _CafeDetailScreenState extends ConsumerState<CafeDetailScreen> {
+  @override
+  void initState() {
+    super.initState();
+    // Record this cafe view in history
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(historyProvider.notifier).addEntry(widget.cafe);
+    });
+  }
+
+  Cafe get cafe => widget.cafe;
+
+  @override
   Widget build(BuildContext context) {
+    final isFav = ref.watch(favoritesProvider).contains(cafe.id);
     return DefaultTabController(
       length: 3,
       child: Scaffold(
@@ -29,6 +49,16 @@ class CafeDetailScreen extends StatelessWidget {
                   onPressed: () => Navigator.of(context).pop(),
                 ),
                 actions: [
+                  IconButton(
+                    icon: Icon(
+                      isFav ? Icons.favorite_rounded : Icons.favorite_border_rounded,
+                      color: isFav ? const Color(0xFFE05555) : const Color(0xFF553722),
+                    ),
+                    tooltip: isFav ? 'Bỏ yêu thích' : 'Thêm yêu thích',
+                    onPressed: () {
+                      ref.read(favoritesProvider.notifier).toggleFavorite(cafe.id);
+                    },
+                  ),
                   IconButton(
                     icon: const Icon(Icons.threed_rotation),
                     tooltip: 'Xem không gian 3D',
@@ -121,7 +151,9 @@ class CafeDetailScreen extends StatelessWidget {
           },
           body: TabBarView(
             children: [
-              _OverviewTab(cafe: cafe),
+              _OverviewTab(cafe: cafe, isFav: isFav, onFavToggle: () {
+                ref.read(favoritesProvider.notifier).toggleFavorite(cafe.id);
+              }),
               MenuTab(menu: cafe.menu),
               ReviewsTab(
                   reviews: cafe.reviews, cafeId: cafe.id, cafeName: cafe.name),
@@ -135,8 +167,10 @@ class CafeDetailScreen extends StatelessWidget {
 
 class _OverviewTab extends StatelessWidget {
   final Cafe cafe;
+  final bool isFav;
+  final VoidCallback onFavToggle;
 
-  const _OverviewTab({required this.cafe});
+  const _OverviewTab({required this.cafe, required this.isFav, required this.onFavToggle});
 
   @override
   Widget build(BuildContext context) {
@@ -312,7 +346,15 @@ class _OverviewTab extends StatelessWidget {
             spacing: 10,
             runSpacing: 10,
             children: [
-              _buildActionButton(Icons.bookmark_border, 'Lưu'),
+              InkWell(
+                borderRadius: BorderRadius.circular(24),
+                onTap: onFavToggle,
+                child: _buildActionButton(
+                  isFav ? Icons.favorite_rounded : Icons.favorite_border_rounded,
+                  isFav ? 'Đã lưu' : 'Lưu',
+                  iconColor: isFav ? const Color(0xFFE05555) : null,
+                ),
+              ),
               _buildActionButton(Icons.share, 'Chia sẻ'),
               _buildActionButtonPrimary(Icons.directions, 'Chỉ đường'),
               InkWell(
@@ -337,7 +379,7 @@ class _OverviewTab extends StatelessWidget {
     );
   }
 
-  Widget _buildActionButton(IconData icon, String label) {
+  Widget _buildActionButton(IconData icon, String label, {Color? iconColor}) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
       decoration: BoxDecoration(
@@ -348,7 +390,7 @@ class _OverviewTab extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 18, color: const Color(0xFF553722)),
+          Icon(icon, size: 18, color: iconColor ?? const Color(0xFF553722)),
           const SizedBox(width: 8),
           Text(label,
               style: const TextStyle(

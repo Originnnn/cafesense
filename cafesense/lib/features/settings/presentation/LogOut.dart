@@ -16,6 +16,18 @@ class MainSettingsScreen extends ConsumerWidget {
     final cardColor = isDarkMode ? const Color(0xFF1E1E1E) : Colors.white;
     final textColor = isDarkMode ? Colors.white : Colors.black87;
 
+    // Show current language name
+    final langCode = context.locale.languageCode;
+    final langName = langCode == 'vi'
+        ? 'Tiếng Việt'
+        : langCode == 'en'
+            ? 'English'
+            : langCode == 'ja'
+                ? '日本語'
+                : langCode == 'fr'
+                    ? 'Français'
+                    : 'Tiếng Việt';
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -46,11 +58,11 @@ class MainSettingsScreen extends ConsumerWidget {
                 primaryColor,
                 textColor,
                 trailing: Switch(
-                  value: isDarkMode, 
+                  value: isDarkMode,
                   onChanged: (val) {
                     ref.read(themeProvider.notifier).toggleTheme(val);
-                  }, 
-                  activeThumbColor: primaryColor
+                  },
+                  activeThumbColor: primaryColor,
                 ),
               ),
             ]),
@@ -61,7 +73,7 @@ class MainSettingsScreen extends ConsumerWidget {
                 tr('language'),
                 primaryColor,
                 textColor,
-                subtitle: context.locale.languageCode == 'vi' ? 'Tiếng Việt' : 'English',
+                subtitle: langName,
                 onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const LanguageScreen())),
               ),
               _buildListTile(Icons.shield_outlined, tr('privacy'), primaryColor, textColor, onTap: () {}),
@@ -217,15 +229,21 @@ class MainSettingsScreen extends ConsumerWidget {
   }
 }
 
+/// Language selection screen with 4 languages: Vietnamese, English, Japanese, French.
 class LanguageScreen extends StatelessWidget {
   const LanguageScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final currentCode = context.locale.languageCode;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
-        leading: IconButton(icon: const Icon(Icons.arrow_back), onPressed: () => Navigator.pop(context)),
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.pop(context),
+        ),
         title: Text(tr('language'), style: const TextStyle(fontWeight: FontWeight.bold)),
       ),
       body: Padding(
@@ -233,17 +251,37 @@ class LanguageScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(tr('choose_language'), style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold, height: 1.2)),
-            const SizedBox(height: 15),
-            Text(tr('choose_language_desc'), style: const TextStyle(color: Colors.grey, fontSize: 15)),
-            const SizedBox(height: 40),
-            GestureDetector(
-              onTap: () => context.setLocale(const Locale('vi', '')),
-              child: _buildLangCard('Tiếng Việt', 'MẶC ĐỊNH HỆ THỐNG', context.locale.languageCode == 'vi'),
+            Text(
+              tr('choose_language'),
+              style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold, height: 1.2),
             ),
-            GestureDetector(
-              onTap: () => context.setLocale(const Locale('en', '')),
-              child: _buildLangCard('English', 'TIẾNG ANH', context.locale.languageCode == 'en'),
+            const SizedBox(height: 15),
+            Text(
+              tr('choose_language_desc'),
+              style: const TextStyle(color: Colors.grey, fontSize: 15),
+            ),
+            const SizedBox(height: 40),
+            Expanded(
+              child: ListView(
+                children: [
+                  GestureDetector(
+                    onTap: () => context.setLocale(const Locale('vi', '')),
+                    child: _buildLangCard('🇻🇳', 'Tiếng Việt', 'MẶC ĐỊNH HỆ THỐNG', currentCode == 'vi'),
+                  ),
+                  GestureDetector(
+                    onTap: () => context.setLocale(const Locale('en', '')),
+                    child: _buildLangCard('🇬🇧', 'English', 'ENGLISH', currentCode == 'en'),
+                  ),
+                  GestureDetector(
+                    onTap: () => context.setLocale(const Locale('ja', '')),
+                    child: _buildLangCard('🇯🇵', '日本語', 'JAPANESE', currentCode == 'ja'),
+                  ),
+                  GestureDetector(
+                    onTap: () => context.setLocale(const Locale('fr', '')),
+                    child: _buildLangCard('🇫🇷', 'Français', 'FRENCH', currentCode == 'fr'),
+                  ),
+                ],
+              ),
             ),
           ],
         ),
@@ -251,7 +289,7 @@ class LanguageScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildLangCard(String title, String sub, bool isSelected) {
+  Widget _buildLangCard(String flag, String title, String sub, bool isSelected) {
     return Container(
       margin: const EdgeInsets.only(bottom: 15),
       padding: const EdgeInsets.all(15),
@@ -261,9 +299,12 @@ class LanguageScreen extends StatelessWidget {
         border: isSelected ? Border.all(color: const Color(0xFF5D4037), width: 2) : null,
       ),
       child: ListTile(
+        leading: Text(flag, style: const TextStyle(fontSize: 28)),
         title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
         subtitle: Text(sub, style: const TextStyle(fontSize: 12)),
-        trailing: isSelected ? const Icon(Icons.check_circle, color: Color(0xFF5D4037)) : const Icon(Icons.circle_outlined, color: Colors.grey),
+        trailing: isSelected
+            ? const Icon(Icons.check_circle, color: Color(0xFF5D4037))
+            : const Icon(Icons.circle_outlined, color: Colors.grey),
       ),
     );
   }

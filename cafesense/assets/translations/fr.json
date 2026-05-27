@@ -1,0 +1,22 @@
+{
+  "settings": "Paramètres",
+  "general_settings": "PARAMÈTRES GÉNÉRAUX",
+  "notifications": "Notifications",
+  "dark_mode": "Mode sombre",
+  "system": "SYSTÈME",
+  "language": "Langue",
+  "privacy": "Politique de confidentialité",
+  "support": "SUPPORT",
+  "help_center": "Centre d'aide",
+  "logout": "Déconnexion",
+  "logout_confirm": "Déconnexion ?",
+  "logout_desc": "Êtes-vous sûr de vouloir terminer la session en cours ?",
+  "confirm_exit": "Confirmer",
+  "cancel": "Annuler",
+  "explore": "EXPLORER",
+  "match": "MATCH",
+  "favorite": "FAVORIS",
+  "profile": "PROFIL",
+  "choose_language": "Choisissez votre\nlangue",
+  "choose_language_desc": "Personnalisez votre expérience de découverte de café avec la langue qui vous convient le mieux."
+}

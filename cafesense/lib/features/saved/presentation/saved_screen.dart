@@ -1,146 +1,177 @@
-import "package:flutter/material.dart";
-import "package:google_fonts/google_fonts.dart";
-import "package:cafesense/core/theme/app_colors.dart";
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:cafesense/core/theme/app_colors.dart';
+import 'package:cafesense/core/providers/favorites_provider.dart';
+import 'package:cafesense/features/cafe/data/models/cafe.dart';
+import 'package:cafesense/features/cafe/presentation/cafe_detail_screen.dart';
 
-class SavedScreen extends StatefulWidget {
+class SavedScreen extends ConsumerWidget {
   const SavedScreen({super.key});
 
   @override
-  State<SavedScreen> createState() => _SavedScreenState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final favCafesAsync = ref.watch(favoriteCafesProvider);
 
-class _SavedScreenState extends State<SavedScreen> {
-  final List<_SavedItem> _savedItems = [
-    _SavedItem(
-      name: "Copper Portafilter",
-      address: "543 Trần Đại Nghĩa, Ngũ Hành Sơn",
-      tag: "YÊN TĨNH",
-      rating: "4.8",
-      imageUrl: "https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=300&q=80",
-    ),
-  ];
-
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.backgroundLight,
-      body: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-        child: _savedItems.isEmpty ? _emptyState() : _listState(),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 120),
+          child: favCafesAsync.when(
+            loading: () => const Center(
+              child: CircularProgressIndicator(color: AppColors.primary),
+            ),
+            error: (e, _) => Center(
+              child: Text(
+                'Không thể tải danh sách yêu thích.',
+                style: GoogleFonts.beVietnamPro(color: AppColors.textSecondary),
+              ),
+            ),
+            data: (cafes) => cafes.isEmpty ? _emptyState(context) : _listState(context, ref, cafes),
+          ),
+        ),
       ),
     );
   }
 
-  Widget _listState() {
+  Widget _listState(BuildContext context, WidgetRef ref, List<Cafe> cafes) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          "Danh sách đã lưu",
+          'Danh sách yêu thích',
           style: GoogleFonts.beVietnamPro(
             fontSize: 24,
             fontWeight: FontWeight.w800,
             color: AppColors.textPrimary,
           ),
         ),
+        const SizedBox(height: 6),
+        Text(
+          '${cafes.length} quán đã lưu',
+          style: GoogleFonts.beVietnamPro(
+            fontSize: 12,
+            color: AppColors.textSecondary,
+          ),
+        ),
         const SizedBox(height: 14),
-        ..._savedItems.map(_savedCard),
+        Expanded(
+          child: ListView.separated(
+            itemCount: cafes.length,
+            separatorBuilder: (_, __) => const SizedBox(height: 10),
+            itemBuilder: (context, index) => _savedCard(context, ref, cafes[index]),
+          ),
+        ),
       ],
     );
   }
 
-  Widget _savedCard(_SavedItem item) {
-    return Container(
-      padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(14),
-      ),
-      child: Row(
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(10),
-            child: Image.network(
-              item.imageUrl,
-              width: 70,
-              height: 70,
-              fit: BoxFit.cover,
-              errorBuilder: (_, __, ___) => Container(
+  Widget _savedCard(BuildContext context, WidgetRef ref, Cafe cafe) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => CafeDetailScreen(cafe: cafe)),
+        );
+      },
+      child: Container(
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          color: AppColors.surface,
+          borderRadius: BorderRadius.circular(14),
+        ),
+        child: Row(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: Image.network(
+                cafe.imageUrl,
                 width: 70,
                 height: 70,
-                color: AppColors.surfaceWarm,
-                child: const Icon(Icons.local_cafe_outlined, color: AppColors.textHint),
+                fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) => Container(
+                  width: 70,
+                  height: 70,
+                  color: AppColors.surfaceWarm,
+                  child: const Icon(Icons.local_cafe_outlined, color: AppColors.textHint),
+                ),
               ),
             ),
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        item.name,
-                        style: GoogleFonts.beVietnamPro(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.textPrimary,
+            const SizedBox(width: 10),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          cafe.name,
+                          style: GoogleFonts.beVietnamPro(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.textPrimary,
+                          ),
                         ),
                       ),
-                    ),
-                    InkWell(
-                      onTap: () => _showDeleteDialog(item),
-                      child: const Icon(Icons.bookmark_rounded, size: 18, color: AppColors.primary),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  item.address,
-                  style: GoogleFonts.beVietnamPro(fontSize: 10, color: AppColors.textSecondary),
-                ),
-                const SizedBox(height: 8),
-                Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFE6F0CF),
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      child: Text(
-                        item.tag,
-                        style: GoogleFonts.beVietnamPro(
-                          fontSize: 8,
-                          fontWeight: FontWeight.w700,
-                          color: const Color(0xFF627A32),
+                      InkWell(
+                        onTap: () => _showRemoveDialog(context, ref, cafe),
+                        borderRadius: BorderRadius.circular(20),
+                        child: const Padding(
+                          padding: EdgeInsets.all(4),
+                          child: Icon(Icons.favorite_rounded, size: 18, color: AppColors.primary),
                         ),
                       ),
-                    ),
-                    const SizedBox(width: 10),
-                    const Icon(Icons.star_rounded, size: 12, color: Color(0xFFE8A140)),
-                    const SizedBox(width: 3),
-                    Text(
-                      item.rating,
-                      style: GoogleFonts.beVietnamPro(
-                        fontSize: 10,
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.textPrimary,
+                    ],
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    cafe.fullName.contains(' -') ? cafe.fullName.split(' -').last.trim() : cafe.fullName,
+                    style: GoogleFonts.beVietnamPro(fontSize: 10, color: AppColors.textSecondary),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      if (cafe.spaceStyle.isNotEmpty)
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFE6F0CF),
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          child: Text(
+                            cafe.spaceStyle.first.toUpperCase(),
+                            style: GoogleFonts.beVietnamPro(
+                              fontSize: 8,
+                              fontWeight: FontWeight.w700,
+                              color: const Color(0xFF627A32),
+                            ),
+                          ),
+                        ),
+                      const SizedBox(width: 8),
+                      Text(
+                        cafe.priceLabel,
+                        style: GoogleFonts.beVietnamPro(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.textSecondary,
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-              ],
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
-  Widget _emptyState() {
+  Widget _emptyState(BuildContext context) {
     return Column(
       children: [
         const Spacer(),
@@ -151,11 +182,11 @@ class _SavedScreenState extends State<SavedScreen> {
             color: AppColors.surfaceWarm,
             borderRadius: BorderRadius.circular(26),
           ),
-          child: const Icon(Icons.bookmark_border_rounded, size: 52, color: AppColors.textHint),
+          child: const Icon(Icons.favorite_border_rounded, size: 52, color: AppColors.textHint),
         ),
         const SizedBox(height: 20),
         Text(
-          "Chưa có quán được lưu",
+          'Chưa có quán yêu thích',
           style: GoogleFonts.beVietnamPro(
             fontSize: 24,
             fontWeight: FontWeight.w800,
@@ -164,7 +195,7 @@ class _SavedScreenState extends State<SavedScreen> {
         ),
         const SizedBox(height: 10),
         Text(
-          "Những quán cafe bạn muốn lưu sẽ\nxuất hiện ở đây.\nHãy khám phá ngay thôi!",
+          'Bấm vào icon ❤️ trên bất kỳ quán nào\nđể thêm vào danh sách yêu thích của bạn!',
           textAlign: TextAlign.center,
           style: GoogleFonts.beVietnamPro(
             fontSize: 13,
@@ -173,32 +204,11 @@ class _SavedScreenState extends State<SavedScreen> {
           ),
         ),
         const Spacer(),
-        SizedBox(
-          width: double.infinity,
-          child: ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primary,
-              padding: const EdgeInsets.symmetric(vertical: 14),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-            ),
-            child: Text(
-              "Khám phá ngay",
-              style: GoogleFonts.beVietnamPro(
-                color: Colors.white,
-                fontWeight: FontWeight.w600,
-                fontSize: 14,
-              ),
-            ),
-          ),
-        ),
       ],
     );
   }
 
-  void _showDeleteDialog(_SavedItem item) {
+  void _showRemoveDialog(BuildContext context, WidgetRef ref, Cafe cafe) {
     showDialog<void>(
       context: context,
       builder: (_) => Dialog(
@@ -215,20 +225,20 @@ class _SavedScreenState extends State<SavedScreen> {
                   color: AppColors.surfaceWarm,
                   borderRadius: BorderRadius.circular(14),
                 ),
-                child: const Icon(Icons.bookmark_outline, color: Color(0xFFE08A8A)),
+                child: const Icon(Icons.heart_broken_outlined, color: Color(0xFFE08A8A)),
               ),
               const SizedBox(height: 14),
               Text(
-                "Bỏ lưu?",
+                'Bỏ yêu thích?',
                 style: GoogleFonts.beVietnamPro(
-                  fontSize: 24,
+                  fontSize: 22,
                   fontWeight: FontWeight.w800,
                   color: AppColors.textPrimary,
                 ),
               ),
               const SizedBox(height: 8),
               Text(
-                "Bạn có chắc chắn muốn xóa quán này khỏi danh sách đã lưu không?",
+                'Bạn có chắc muốn xóa ${cafe.name} khỏi danh sách yêu thích không?',
                 textAlign: TextAlign.center,
                 style: GoogleFonts.beVietnamPro(
                   fontSize: 13,
@@ -241,7 +251,7 @@ class _SavedScreenState extends State<SavedScreen> {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
-                    setState(() => _savedItems.remove(item));
+                    ref.read(favoritesProvider.notifier).toggleFavorite(cafe.id);
                     Navigator.of(context).pop();
                   },
                   style: ElevatedButton.styleFrom(
@@ -250,7 +260,7 @@ class _SavedScreenState extends State<SavedScreen> {
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                   ),
                   child: Text(
-                    "Xác nhận xóa",
+                    'Xác nhận xóa',
                     style: GoogleFonts.beVietnamPro(color: Colors.white, fontWeight: FontWeight.w600),
                   ),
                 ),
@@ -259,7 +269,7 @@ class _SavedScreenState extends State<SavedScreen> {
               TextButton(
                 onPressed: () => Navigator.of(context).pop(),
                 child: Text(
-                  "Hủy",
+                  'Hủy',
                   style: GoogleFonts.beVietnamPro(color: AppColors.textSecondary, fontWeight: FontWeight.w600),
                 ),
               ),
@@ -269,20 +279,4 @@ class _SavedScreenState extends State<SavedScreen> {
       ),
     );
   }
-}
-
-class _SavedItem {
-  _SavedItem({
-    required this.name,
-    required this.address,
-    required this.tag,
-    required this.rating,
-    required this.imageUrl,
-  });
-
-  final String name;
-  final String address;
-  final String tag;
-  final String rating;
-  final String imageUrl;
 }

@@ -42,7 +42,7 @@ class _MainAppScreenState extends ConsumerState<MainAppScreen> {
       backgroundColor: pageBg,
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(16, 12, 16, 110),
+          padding: const EdgeInsets.fromLTRB(16, 12, 16, 120),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -108,9 +108,14 @@ class _MainAppScreenState extends ConsumerState<MainAppScreen> {
                     icon: Icons.translate_rounded,
                     iconColor: AppColors.accent,
                     title: tr('language'),
-                    subtitle: context.locale.languageCode == 'vi'
-                        ? 'Tiếng Việt'
-                        : 'English',
+                    subtitle: () {
+                      final code = context.locale.languageCode;
+                      if (code == 'vi') return 'Tiếng Việt';
+                      if (code == 'en') return 'English';
+                      if (code == 'ja') return '日本語';
+                      if (code == 'fr') return 'Français';
+                      return 'Tiếng Việt';
+                    }(),
                     onTap: () => Navigator.push(
                       context,
                       MaterialPageRoute(

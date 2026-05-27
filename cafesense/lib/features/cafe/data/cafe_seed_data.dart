@@ -1,4 +1,4 @@
-// GENERATED SEED DATA FROM EXCEL
+﻿// GENERATED SEED DATA FROM EXCEL
 // DO NOT EDIT MANUALLY
 
 const List<Map<String, dynamic>> cafeSeedData = [
@@ -8,7 +8,7 @@ const List<Map<String, dynamic>> cafeSeedData = [
     "fullName": "Sora Coffee -Ngã Ba, Nam Kỳ Khởi Nghĩa Huỳnh Lắm, Ngũ Hành Sơn",
     "description": "Quán nằm ở vị trí đắc địa ngã ba, không gian xanh mát mẻ, đồ uống đa dạng thích hợp cho các buổi hẹn hò hoặc thư giãn cùng bạn bè.",
     "imageUrl": "https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=800&q=80",
-    "panoramaUrl": "https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=1600&q=80",
+    "panoramaUrl": "https://upload.wikimedia.org/wikipedia/commons/7/7c/Au_March%C3%A9_de_la_Butte%2C_Paris_April_2007.jpg",
     "latitude": 15.979,
     "longitude": 108.2678,
     "priceLabel": "\$\$\$",
@@ -205,7 +205,7 @@ const List<Map<String, dynamic>> cafeSeedData = [
     "fullName": "SH Flow -Trịnh Hoài Đức, Điện Bàn Đông",
     "description": "Không gian hiện đại, yên tĩnh, thiết kế tối giản với rất nhiều ổ cắm tiện lợi, cực kỳ lý tưởng cho người làm việc tự do hoặc tự học.",
     "imageUrl": "https://images.unsplash.com/photo-1497935586351-b67a49e012bf?w=800&q=80",
-    "panoramaUrl": "https://images.unsplash.com/photo-1497935586351-b67a49e012bf?w=1600&q=80",
+    "panoramaUrl": "https://upload.wikimedia.org/wikipedia/commons/7/7c/Au_March%C3%A9_de_la_Butte%2C_Paris_April_2007.jpg",
     "latitude": 15.9189,
     "longitude": 108.2612,
     "priceLabel": "\$\$\$",
@@ -396,7 +396,7 @@ const List<Map<String, dynamic>> cafeSeedData = [
     "fullName": "Túc Tắc Tea -76 Huỳnh Văn Nghệ, Ngũ Hành Sơn",
     "description": "Góc nhỏ ấm cúng với những tách trà thơm lừng và bánh ngọt tự làm. Nơi lý tưởng để tụ tập chuyện trò và thư giãn.",
     "imageUrl": "https://images.unsplash.com/photo-1559525839-b184a4d698c7?w=800&q=80",
-    "panoramaUrl": "https://images.unsplash.com/photo-1559525839-b184a4d698c7?w=1600&q=80",
+    "panoramaUrl": "https://upload.wikimedia.org/wikipedia/commons/7/7c/Au_March%C3%A9_de_la_Butte%2C_Paris_April_2007.jpg",
     "latitude": 15.985,
     "longitude": 108.265,
     "priceLabel": "\$\$",
@@ -588,7 +588,7 @@ const List<Map<String, dynamic>> cafeSeedData = [
     "fullName": "Zone Six -105-107 Trần Đại Nghĩa, Ngũ Hành Sơn",
     "description": "Không gian siêu rộng rãi, nhiều góc ngồi thoải mái từ bàn nhóm đến bàn đơn. Phù hợp cho cả học nhóm và hẹn hò.",
     "imageUrl": "https://images.unsplash.com/photo-1511920170033-f8396924c348?w=800&q=80",
-    "panoramaUrl": "https://images.unsplash.com/photo-1511920170033-f8396924c348?w=1600&q=80",
+    "panoramaUrl": "https://upload.wikimedia.org/wikipedia/commons/7/7c/Au_March%C3%A9_de_la_Butte%2C_Paris_April_2007.jpg",
     "latitude": 15.9868,
     "longitude": 108.2525,
     "priceLabel": "\$\$\$",
@@ -774,7 +774,7 @@ const List<Map<String, dynamic>> cafeSeedData = [
     "fullName": "Milano Coffee- Huỳnh Lắm, Ngũ Hành Sơn",
     "description": "Hương vị cà phê truyền thống đậm đà, không gian mở thoáng đãng bình dân, là điểm hẹn quen thuộc của các tín đồ cà phê phin.",
     "imageUrl": "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=800&q=80",
-    "panoramaUrl": "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=1600&q=80",
+    "panoramaUrl": "https://upload.wikimedia.org/wikipedia/commons/7/7c/Au_March%C3%A9_de_la_Butte%2C_Paris_April_2007.jpg",
     "latitude": 15.9772,
     "longitude": 108.267,
     "priceLabel": "\$",
@@ -959,7 +959,7 @@ const List<Map<String, dynamic>> cafeSeedData = [
     "fullName": "Xeko -21 Huỳnh Văn Nghệ, Ngũ Hành Sơn",
     "description": "Không gian xinh xắn, thiết kế dễ thương ấm áp, phù hợp cho học tập hoặc chuyện trò nhẹ nhàng.",
     "imageUrl": "https://images.unsplash.com/photo-1453614512568-c4024d13c247?w=800&q=80",
-    "panoramaUrl": "https://images.unsplash.com/photo-1453614512568-c4024d13c247?w=1600&q=80",
+    "panoramaUrl": "https://upload.wikimedia.org/wikipedia/commons/7/7c/Au_March%C3%A9_de_la_Butte%2C_Paris_April_2007.jpg",
     "latitude": 15.986,
     "longitude": 108.264,
     "priceLabel": "\$\$",
@@ -1145,7 +1145,7 @@ const List<Map<String, dynamic>> cafeSeedData = [
     "fullName": "Xingfu Cha -70 Lê Thiện Trị, Ngũ Hành Sơn",
     "description": "Quán trà sữa hiện đại với menu trà sữa và ăn vặt đa dạng phong phú, điểm tụ tập yêu thích của giới trẻ học sinh sinh viên.",
     "imageUrl": "https://images.unsplash.com/photo-1498804103079-a6351b050096?w=800&q=80",
-    "panoramaUrl": "https://images.unsplash.com/photo-1498804103079-a6351b050096?w=1600&q=80",
+    "panoramaUrl": "https://upload.wikimedia.org/wikipedia/commons/7/7c/Au_March%C3%A9_de_la_Butte%2C_Paris_April_2007.jpg",
     "latitude": 15.9822,
     "longitude": 108.271,
     "priceLabel": "\$\$",
@@ -1331,7 +1331,7 @@ const List<Map<String, dynamic>> cafeSeedData = [
     "fullName": "Trump Coffee -312 Huỳnh Văn Nghệ, Ngũ Hành Sơn",
     "description": "Quán có không gian rộng rãi kết hợp giữa máy lạnh và sân vườn ngoài trời, nước uống pha chế ngon, chỗ đỗ xe thoải mái.",
     "imageUrl": "https://images.unsplash.com/photo-1507133750040-4a8f57021571?w=800&q=80",
-    "panoramaUrl": "https://images.unsplash.com/photo-1507133750040-4a8f57021571?w=1600&q=80",
+    "panoramaUrl": "https://upload.wikimedia.org/wikipedia/commons/7/7c/Au_March%C3%A9_de_la_Butte%2C_Paris_April_2007.jpg",
     "latitude": 15.9805,
     "longitude": 108.2675,
     "priceLabel": "\$\$\$",
@@ -1518,7 +1518,7 @@ const List<Map<String, dynamic>> cafeSeedData = [
     "fullName": "LEO Cà phê -Lô 12 Huỳnh Văn Nghệ, Ngũ Hành Sơn",
     "description": "Mức giá bình dân kết hợp cùng không gian điều hòa mát mẻ, yên tĩnh, là sự lựa chọn hợp lý cho các bạn làm việc tự do.",
     "imageUrl": "https://images.unsplash.com/photo-1521017432531-fbd92d768814?w=800&q=80",
-    "panoramaUrl": "https://images.unsplash.com/photo-1521017432531-fbd92d768814?w=1600&q=80",
+    "panoramaUrl": "https://upload.wikimedia.org/wikipedia/commons/7/7c/Au_March%C3%A9_de_la_Butte%2C_Paris_April_2007.jpg",
     "latitude": 15.983,
     "longitude": 108.266,
     "priceLabel": "\$",
@@ -1704,7 +1704,7 @@ const List<Map<String, dynamic>> cafeSeedData = [
     "fullName": "ToCha- 65 -Lê Thiện Trị, Ngũ Hành Sơn",
     "description": "Thương hiệu trà sữa nổi tiếng với không gian năng động, trẻ trung, menu đồ uống giá hạt dẻ nhưng cực kỳ chất lượng.",
     "imageUrl": "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&q=80",
-    "panoramaUrl": "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1600&q=80",
+    "panoramaUrl": "https://upload.wikimedia.org/wikipedia/commons/7/7c/Au_March%C3%A9_de_la_Butte%2C_Paris_April_2007.jpg",
     "latitude": 15.9818,
     "longitude": 108.2707,
     "priceLabel": "\$",
@@ -1885,3 +1885,4 @@ const List<Map<String, dynamic>> cafeSeedData = [
     "viewRating": 2.0
   }
 ];
+

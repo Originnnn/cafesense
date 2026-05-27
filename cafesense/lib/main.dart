@@ -39,7 +39,7 @@ Future<void> main() async {
   runApp(
     ProviderScope(
       child: EasyLocalization(
-        supportedLocales: const [Locale('vi', ''), Locale('en', '')],
+        supportedLocales: const [Locale('vi', ''), Locale('en', ''), Locale('ja', ''), Locale('fr', '')],
         path: 'assets/translations',
         fallbackLocale: const Locale('vi', ''),
         child: const CafeSenseApp(),
