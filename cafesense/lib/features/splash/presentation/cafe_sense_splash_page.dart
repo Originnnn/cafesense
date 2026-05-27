@@ -7,6 +7,7 @@ import 'package:cafesense/features/onboarding/presentation/welcome_screen.dart';
 import 'package:cafesense/features/auth/presentation/login_page.dart';
 import 'package:cafesense/features/home/presentation/home_page.dart';
 import 'package:cafesense/core/theme/app_colors.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class CafeSenseSplashPage extends StatefulWidget {
   const CafeSenseSplashPage({super.key});
@@ -30,7 +31,8 @@ class _CafeSenseSplashPageState extends State<CafeSenseSplashPage> {
     }
 
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    final bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
+    final user = FirebaseAuth.instance.currentUser;
+    final bool isLoggedIn = user != null;
     final bool isOnboardingCompleted =
         prefs.getBool('isOnboardingCompleted') ?? false;
 

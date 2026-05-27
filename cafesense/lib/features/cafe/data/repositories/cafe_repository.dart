@@ -18,6 +18,8 @@ class CafeRepository {
     try {
       // Seed first if database is empty
       await seedCafesIfNeeded();
+      // Temporarily update menus to sync images
+      await _updateMenusInFirestore();
 
       final snapshot = await _firestore.collection('cafes').get();
       if (snapshot.docs.isEmpty) {
@@ -48,6 +50,20 @@ class CafeRepository {
     }
   }
 
+  Future<void> _updateMenusInFirestore() async {
+    try {
+      final batch = _firestore.batch();
+      for (final data in cafeSeedData) {
+        final docRef = _firestore.collection('cafes').doc(data['id']);
+        batch.update(docRef, {'menu': data['menu']});
+      }
+      await batch.commit();
+      debugPrint('✅ Updated menus in Firestore successfully!');
+    } catch (e) {
+      debugPrint('❌ Error updating menus: $e');
+    }
+  }
+
   List<Cafe> _getMockCafes({double? lat, double? lng}) {
     final double centerLat = lat ?? 10.774;
     final double centerLng = lng ?? 106.702;
@@ -56,15 +72,23 @@ class CafeRepository {
       Cafe(
         id: 'sora_coffee',
         name: 'Sora Coffee',
-        fullName: 'Sora Coffee -Ngã Ba, Nam Kỳ Khởi Nghĩa Huỳnh Lắm, Ngũ Hành Sơn',
-        description: 'Quán nằm ở vị trí đắc địa ngã ba, không gian xanh mát mẻ, đồ uống đa dạng thích hợp cho các buổi hẹn hò hoặc thư giãn cùng bạn bè.',
-        imageUrl: 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=500&q=80',
+        fullName:
+            'Sora Coffee -Ngã Ba, Nam Kỳ Khởi Nghĩa Huỳnh Lắm, Ngũ Hành Sơn',
+        description:
+            'Quán nằm ở vị trí đắc địa ngã ba, không gian xanh mát mẻ, đồ uống đa dạng thích hợp cho các buổi hẹn hò hoặc thư giãn cùng bạn bè.',
+        imageUrl:
+            'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=500&q=80',
         latitude: centerLat,
         longitude: centerLng,
         priceLabel: '\$\$\$',
         tagline: 'Không gian xanh ngập tràn ánh sáng',
         spaceStyle: const ['Thiên nhiên', 'Ấm cúng'],
-        amenities: const ['Máy lạnh', 'Không hút thuốc', 'Wifi mạnh', 'Chỗ để xe'],
+        amenities: const [
+          'Máy lạnh',
+          'Không hút thuốc',
+          'Wifi mạnh',
+          'Chỗ để xe'
+        ],
         menu: const [
           MenuItem(name: 'Cà phê sữa đá', price: 29000, category: 'Coffee'),
           MenuItem(name: 'Trà đào cam sả', price: 35000, category: 'Tea'),
@@ -82,7 +106,8 @@ class CafeRepository {
       if (userProfile == null) {
         final currentUser = FirebaseAuth.instance.currentUser;
         if (currentUser != null) {
-          final doc = await _firestore.collection('users').doc(currentUser.uid).get();
+          final doc =
+              await _firestore.collection('users').doc(currentUser.uid).get();
           if (doc.exists && doc.data() != null) {
             userProfile = UserProfile.fromJson(doc.data()!);
           }
@@ -119,7 +144,8 @@ class CafeRepository {
       }).toList();
 
       // Sort by match percentage descending
-      matchedCafes.sort((a, b) => (b.matchPercent ?? 0).compareTo(a.matchPercent ?? 0));
+      matchedCafes
+          .sort((a, b) => (b.matchPercent ?? 0).compareTo(a.matchPercent ?? 0));
       return matchedCafes;
     } catch (e) {
       debugPrint('Error calculating matched cafes: $e');
@@ -139,7 +165,8 @@ class CafeRepository {
       final String priceTier = filters.isNotEmpty ? filters[0] : "Tầm trung";
       final String distance = filters.length > 1 ? filters[1] : "1 - 3 km";
       final String space = filters.length > 2 ? filters[2] : "Hiện đại";
-      final List<String> amenities = filters.length > 3 ? filters.sublist(3) : const [];
+      final List<String> amenities =
+          filters.length > 3 ? filters.sublist(3) : const [];
 
       // 3. Define weights configuration
       final Map<String, Map<String, double>> weights = {
@@ -210,9 +237,13 @@ class CafeRepository {
         "wifi": amenities.contains("Wifi mạnh") ? 5.0 : 3.0,
         "khong_gian": space == "Yên tĩnh" ? 4.5 : 4.0,
         "o_cam": amenities.contains("Ổ cắm điện") ? 5.0 : 2.0,
-        "gia_ca": priceTier == "Bình dân" ? 2.0 : (priceTier == "Cao cấp" ? 4.5 : 3.0),
+        "gia_ca": priceTier == "Bình dân"
+            ? 2.0
+            : (priceTier == "Cao cấp" ? 4.5 : 3.0),
         "ngon": 4.0,
-        "view": space == "Sân vườn" ? 4.5 : (space == "Cổ điển" ? 4.0 : (space == "Hiện đại" ? 3.0 : 2.5)),
+        "view": space == "Sân vườn"
+            ? 4.5
+            : (space == "Cổ điển" ? 4.0 : (space == "Hiện đại" ? 3.0 : 2.5)),
       };
 
       // Adjust space quality based on other features selected
@@ -225,7 +256,14 @@ class CafeRepository {
       userInput["khong_gian"] = userInput["khong_gian"]!.clamp(1.0, 5.0);
 
       final w = weights[purpose] ?? weights["khac"]!;
-      final featuresList = ["wifi", "khong_gian", "o_cam", "gia_ca", "ngon", "view"];
+      final featuresList = [
+        "wifi",
+        "khong_gian",
+        "o_cam",
+        "gia_ca",
+        "ngon",
+        "view"
+      ];
 
       // 6. Calculate match score and filter cafes
       final List<Cafe> matchedResults = [];
@@ -234,7 +272,8 @@ class CafeRepository {
         // Price filtering: only filter out cafes where the cheapest drink is more than the maximum budget
         if (cafe.menu.isNotEmpty) {
           final menuPricesK = cafe.menu.map((e) => e.price / 1000.0).toList();
-          final double minMenuPrice = menuPricesK.reduce((a, b) => a < b ? a : b);
+          final double minMenuPrice =
+              menuPricesK.reduce((a, b) => a < b ? a : b);
 
           if (minMenuPrice > priceRange.end) {
             continue;
@@ -267,17 +306,22 @@ class CafeRepository {
         // Space Style filtering
         bool matchesSpace = false;
         if (space == "Hiện đại") {
-          matchesSpace = cafe.spaceStyle.any((s) => s.toLowerCase().contains("hiện đại"));
+          matchesSpace =
+              cafe.spaceStyle.any((s) => s.toLowerCase().contains("hiện đại"));
         } else if (space == "Cổ điển") {
-          matchesSpace = cafe.spaceStyle.any((s) => s.toLowerCase().contains("cổ điển"));
+          matchesSpace =
+              cafe.spaceStyle.any((s) => s.toLowerCase().contains("cổ điển"));
         } else if (space == "Sân vườn") {
-          matchesSpace = cafe.spaceStyle.any((s) => s.toLowerCase().contains("sân vườn") || s.toLowerCase().contains("thiên nhiên"));
+          matchesSpace = cafe.spaceStyle.any((s) =>
+              s.toLowerCase().contains("sân vườn") ||
+              s.toLowerCase().contains("thiên nhiên"));
         } else if (space == "Yên tĩnh") {
           final desc = cafe.description.toLowerCase();
           final tag = cafe.tagline.toLowerCase();
           matchesSpace = desc.contains("yên tĩnh") ||
               tag.contains("yên tĩnh") ||
-              cafe.spaceStyle.any((s) => s.toLowerCase().contains("yên tĩnh")) ||
+              cafe.spaceStyle
+                  .any((s) => s.toLowerCase().contains("yên tĩnh")) ||
               cafe.id == "sh_flow" ||
               cafe.id == "zone_six" ||
               cafe.id == "leo_coffee" ||
@@ -293,7 +337,8 @@ class CafeRepository {
         if (amenities.isNotEmpty) {
           final bool hasAll = amenities.every((filter) {
             final String normFilter = filter.toLowerCase().trim();
-            return cafe.amenities.any((a) => a.toLowerCase().contains(normFilter));
+            return cafe.amenities
+                .any((a) => a.toLowerCase().contains(normFilter));
           });
           if (!hasAll) {
             continue;
@@ -323,7 +368,8 @@ class CafeRepository {
           maxScoreSum += weightVal * 4.0;
         }
 
-        final double matchScore = maxScoreSum > 0 ? (1.0 - (scoreSum / maxScoreSum)) : 0.0;
+        final double matchScore =
+            maxScoreSum > 0 ? (1.0 - (scoreSum / maxScoreSum)) : 0.0;
         final int matchPercent = (matchScore * 100).round().clamp(0, 100);
 
         matchedResults.add(
@@ -358,7 +404,8 @@ class CafeRepository {
       }
 
       // Sort descending by matchPercent
-      matchedResults.sort((a, b) => (b.matchPercent ?? 0).compareTo(a.matchPercent ?? 0));
+      matchedResults
+          .sort((a, b) => (b.matchPercent ?? 0).compareTo(a.matchPercent ?? 0));
       return matchedResults;
     } catch (e) {
       debugPrint('Error calculating matched cafes: $e');
@@ -375,8 +422,10 @@ class CafeRepository {
     // 1. Space Styles Match (Weight = 3)
     if (userProfile.spaceStyle.isNotEmpty) {
       totalWeight += 3;
-      final cafeStyles = cafe.spaceStyle.map((s) => s.trim().toLowerCase()).toList();
-      final userStyles = userProfile.spaceStyle.map((s) => s.trim().toLowerCase()).toList();
+      final cafeStyles =
+          cafe.spaceStyle.map((s) => s.trim().toLowerCase()).toList();
+      final userStyles =
+          userProfile.spaceStyle.map((s) => s.trim().toLowerCase()).toList();
       final overlaps = userStyles.where((s) => cafeStyles.contains(s)).toList();
 
       final styleScore = overlaps.length / userStyles.length;
@@ -386,9 +435,12 @@ class CafeRepository {
     // 2. Amenities Match (Weight = 3)
     if (userProfile.amenities.isNotEmpty) {
       totalWeight += 3;
-      final cafeAmenities = cafe.amenities.map((a) => a.trim().toLowerCase()).toList();
-      final userAmenities = userProfile.amenities.map((a) => a.trim().toLowerCase()).toList();
-      final overlaps = userAmenities.where((a) => cafeAmenities.contains(a)).toList();
+      final cafeAmenities =
+          cafe.amenities.map((a) => a.trim().toLowerCase()).toList();
+      final userAmenities =
+          userProfile.amenities.map((a) => a.trim().toLowerCase()).toList();
+      final overlaps =
+          userAmenities.where((a) => cafeAmenities.contains(a)).toList();
 
       final amenityScore = overlaps.length / userAmenities.length;
       matchedWeight += amenityScore * 3;
@@ -401,13 +453,15 @@ class CafeRepository {
 
     if (fp.roastLevel.trim().isNotEmpty) {
       flavorTotal++;
-      if (fp.roastLevel.trim().toLowerCase() == cafe.roastLevel.trim().toLowerCase()) {
+      if (fp.roastLevel.trim().toLowerCase() ==
+          cafe.roastLevel.trim().toLowerCase()) {
         flavorMatched++;
       }
     }
     if (fp.acidity.trim().isNotEmpty) {
       flavorTotal++;
-      if (fp.acidity.trim().toLowerCase() == cafe.acidity.trim().toLowerCase()) {
+      if (fp.acidity.trim().toLowerCase() ==
+          cafe.acidity.trim().toLowerCase()) {
         flavorMatched++;
       }
     }
@@ -419,13 +473,15 @@ class CafeRepository {
     }
     if (fp.sweetness.trim().isNotEmpty) {
       flavorTotal++;
-      if (fp.sweetness.trim().toLowerCase() == cafe.sweetness.trim().toLowerCase()) {
+      if (fp.sweetness.trim().toLowerCase() ==
+          cafe.sweetness.trim().toLowerCase()) {
         flavorMatched++;
       }
     }
     if (fp.process.trim().isNotEmpty) {
       flavorTotal++;
-      if (fp.process.trim().toLowerCase() == cafe.process.trim().toLowerCase()) {
+      if (fp.process.trim().toLowerCase() ==
+          cafe.process.trim().toLowerCase()) {
         flavorMatched++;
       }
     }
@@ -443,14 +499,24 @@ class CafeRepository {
       final description = cafe.description.toLowerCase();
 
       double purposeScore = 0.5;
-      if (purpose.contains('học') || purpose.contains('làm việc') || purpose.contains('work')) {
-        if (tagline.contains('work') || tagline.contains('focus') || description.contains('việc') || description.contains('tập trung')) {
+      if (purpose.contains('học') ||
+          purpose.contains('làm việc') ||
+          purpose.contains('work')) {
+        if (tagline.contains('work') ||
+            tagline.contains('focus') ||
+            description.contains('việc') ||
+            description.contains('tập trung')) {
           purposeScore = 1.0;
         } else {
           purposeScore = 0.4;
         }
-      } else if (purpose.contains('thư giãn') || purpose.contains('đọc sách') || purpose.contains('relax')) {
-        if (tagline.contains('focus') || description.contains('đọc sách') || description.contains('thư giãn') || description.contains('yên tĩnh')) {
+      } else if (purpose.contains('thư giãn') ||
+          purpose.contains('đọc sách') ||
+          purpose.contains('relax')) {
+        if (tagline.contains('focus') ||
+            description.contains('đọc sách') ||
+            description.contains('thư giãn') ||
+            description.contains('yên tĩnh')) {
           purposeScore = 1.0;
         } else {
           purposeScore = 0.5;
@@ -465,11 +531,24 @@ class CafeRepository {
     return matchPercent.clamp(0, 100);
   }
 
-  Future<Review> postReview(String cafeId, double rating, String comment) async {
+  Future<Review> postReview(
+      String cafeId, double rating, String comment) async {
     try {
       final currentUser = FirebaseAuth.instance.currentUser;
-      final String userName = currentUser?.displayName ?? currentUser?.email?.split('@').first ?? 'Bạn';
-      final String userAvatar = '👤';
+      final String userName = currentUser?.displayName ??
+          currentUser?.email?.split('@').first ??
+          'Bạn';
+      
+      String userAvatar = '👤';
+      if (currentUser != null) {
+        final doc = await _firestore.collection('users').doc(currentUser.uid).get();
+        if (doc.exists) {
+          final data = doc.data();
+          if (data != null && data['avatar'] != null && data['avatar'].toString().isNotEmpty) {
+            userAvatar = data['avatar'];
+          }
+        }
+      }
 
       final review = Review(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
@@ -485,7 +564,8 @@ class CafeRepository {
         final doc = await transaction.get(docRef);
         if (doc.exists) {
           final data = doc.data()!;
-          final List<dynamic> oldReviews = data['reviews'] as List<dynamic>? ?? [];
+          final List<dynamic> oldReviews =
+              data['reviews'] as List<dynamic>? ?? [];
           final newReviews = [review.toJson(), ...oldReviews];
           transaction.update(docRef, {'reviews': newReviews});
         }
@@ -509,7 +589,10 @@ class CafeRepository {
     try {
       final currentUser = FirebaseAuth.instance.currentUser;
       if (currentUser != null) {
-        await _firestore.collection('users').doc(currentUser.uid).set(profile.toJson());
+        await _firestore
+            .collection('users')
+            .doc(currentUser.uid)
+            .set(profile.toJson(), SetOptions(merge: true));
         debugPrint('✅ Saved user profile to Firestore successfully!');
       } else {
         throw Exception('Người dùng chưa đăng nhập.');

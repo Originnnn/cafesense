@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:cafesense/core/theme/app_colors.dart';
 import 'package:cafesense/features/auth/presentation/forgot_password_page.dart';
 import 'package:cafesense/features/auth/presentation/register_page.dart';
-import 'package:cafesense/features/onboarding/presentation/avatar_picker_screen.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

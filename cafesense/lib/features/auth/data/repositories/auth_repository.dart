@@ -1,4 +1,3 @@
-import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -36,14 +35,14 @@ class AuthRepository {
         'token': token,
         'id': userId,
       };
-    } on FirebaseAuthException catch (e) {
-      throw e;
+    } on FirebaseAuthException {
+      rethrow;
     } catch (e) {
       throw Exception('Đã xảy ra lỗi hệ thống.');
     }
   }
 
-  Future<Map<String, dynamic>> register(String email, String password) async {
+  Future<Map<String, dynamic>> register(String name, String email, String password) async {
     try {
       final userCredential =
           await FirebaseAuth.instance.createUserWithEmailAndPassword(
@@ -56,6 +55,9 @@ class AuthRepository {
         throw Exception('Đăng ký thất bại.');
       }
 
+      await user.updateDisplayName(name);
+      await user.reload();
+
       final String token = await user.getIdToken() ?? '';
       final String userId = user.uid;
 
@@ -63,15 +65,14 @@ class AuthRepository {
       await prefs.setString('token', token);
       await prefs.setString('userId', userId);
       await prefs.setBool('isLoggedIn', true);
-      // Bỏ qua khảo sát, đi thẳng vào trang chủ
-      await prefs.setBool('isOnboardingCompleted', true);
+      // (Đối với người dùng đăng ký mới, KHÔNG set isOnboardingCompleted = true để họ làm khảo sát)
 
       return {
         'token': token,
         'id': userId,
       };
-    } on FirebaseAuthException catch (e) {
-      throw e;
+    } on FirebaseAuthException {
+      rethrow;
     } catch (e) {
       throw Exception('Đã xảy ra lỗi hệ thống.');
     }

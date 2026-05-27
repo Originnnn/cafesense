@@ -103,54 +103,47 @@ class _Cafe3dSpaceScreenState extends State<Cafe3dSpaceScreen>
           children: [
             // ── 3D Panorama View ──────────────────────────────────
             Positioned.fill(
-              child: PanoramaViewer(
-                zoom: _zoom,
-                animSpeed: _isAutoRotating ? 0.3 : 0.0,
-                sensorControl:
-                    _useGyroscope ? SensorControl.orientation : SensorControl.none,
-                onViewChanged: (lon, lat, tilt) {
-                  if (mounted) {
-                    setState(() => _longitude = lon);
-                  }
-                },
-                child: Image.network(
-                  widget.panoramaUrl,
-                  fit: BoxFit.cover,
-                  loadingBuilder: (context, child, loadingProgress) {
-                    if (loadingProgress == null) {
-                      WidgetsBinding.instance.addPostFrameCallback((_) {
+              child: widget.panoramaUrl.isEmpty
+                  ? Container(
+                      color: const Color(0xFF1A0A00),
+                      child: Center(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(Icons.broken_image_rounded,
+                                color: Colors.white38, size: 64),
+                            const SizedBox(height: 16),
+                            Text(
+                              'Không có ảnh không gian 3D',
+                              style: GoogleFonts.beVietnamPro(
+                                  color: Colors.white54, fontSize: 14),
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                  : PanoramaViewer(
+                      zoom: _zoom,
+                      animSpeed: _isAutoRotating ? 0.3 : 0.0,
+                      sensorControl: _useGyroscope
+                          ? SensorControl.orientation
+                          : SensorControl.none,
+                      onViewChanged: (lon, lat, tilt) {
+                        if (mounted) {
+                          setState(() => _longitude = lon);
+                        }
+                      },
+                      onImageLoad: () {
                         if (mounted && !_imageLoaded) {
                           setState(() => _imageLoaded = true);
                         }
-                      });
-                      return child;
-                    }
-                    return const SizedBox.shrink();
-                  },
-                  errorBuilder: (_, __, ___) => Container(
-                    color: const Color(0xFF1A0A00),
-                    child: Center(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Icon(Icons.broken_image_rounded,
-                              color: Colors.white38, size: 64),
-                          const SizedBox(height: 16),
-                          Text(
-                            'Không thể tải ảnh không gian',
-                            style: GoogleFonts.beVietnamPro(
-                                color: Colors.white54, fontSize: 14),
-                          ),
-                        ],
-                      ),
+                      },
+                      child: Image.network(widget.panoramaUrl),
                     ),
-                  ),
-                ),
-              ),
             ),
 
             // ── Loading Overlay ───────────────────────────────────
-            if (!_imageLoaded)
+            if (!_imageLoaded && widget.panoramaUrl.isNotEmpty)
               Positioned.fill(
                 child: Container(
                   color: Colors.black87,

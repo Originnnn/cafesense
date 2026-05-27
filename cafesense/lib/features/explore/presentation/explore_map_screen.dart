@@ -10,6 +10,7 @@ import "package:cafesense/core/theme/app_colors.dart";
 import "package:cafesense/features/cafe/data/models/cafe.dart";
 import "package:cafesense/features/cafe/data/repositories/cafe_repository.dart";
 import "package:cafesense/features/cafe/presentation/cafe_detail_screen.dart";
+import "package:cafesense/core/utils/map_utils.dart";
 
 class ExploreMapScreen extends ConsumerStatefulWidget {
   const ExploreMapScreen({super.key});
@@ -280,35 +281,65 @@ class _ExploreMapScreenState extends ConsumerState<ExploreMapScreen> {
                 ],
               ),
               const SizedBox(height: 20),
-              SizedBox(
-                width: double.infinity,
-                height: 52,
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => CafeDetailScreen(cafe: cafe),
+              Row(
+                children: [
+                  Expanded(
+                    child: SizedBox(
+                      height: 52,
+                      child: OutlinedButton(
+                        onPressed: () {
+                          MapUtils.navigateTo(cafe.latitude, cafe.longitude);
+                        },
+                        style: OutlinedButton.styleFrom(
+                          side: const BorderSide(color: AppColors.primary, width: 2),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                        ),
+                        child: Text(
+                          "Chỉ đường",
+                          style: GoogleFonts.beVietnamPro(
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.primary,
+                          ),
+                        ),
                       ),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.buttonPrimary,
-                    foregroundColor: AppColors.buttonText,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14),
-                    ),
-                    elevation: 0,
-                  ),
-                  child: Text(
-                    "Xem chi tiết",
-                    style: GoogleFonts.beVietnamPro(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: SizedBox(
+                      height: 52,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => CafeDetailScreen(cafe: cafe),
+                            ),
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.buttonPrimary,
+                          foregroundColor: AppColors.buttonText,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                          elevation: 0,
+                        ),
+                        child: Text(
+                          "Chi tiết",
+                          style: GoogleFonts.beVietnamPro(
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),

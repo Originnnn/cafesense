@@ -7,6 +7,7 @@ import "package:cafesense/core/widgets/survey_widgets.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
 import "package:cafesense/features/onboarding/presentation/onboarding_notifier.dart";
 import "package:cafesense/features/cafe/data/repositories/cafe_repository.dart";
+import "package:firebase_auth/firebase_auth.dart";
 
 class SuccessScreen extends ConsumerStatefulWidget {
   const SuccessScreen({super.key});
@@ -83,7 +84,7 @@ class _SuccessScreenState extends ConsumerState<SuccessScreen>
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      "Minh Anh",
+                      _getUserName(),
                       style: GoogleFonts.beVietnamPro(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
@@ -236,5 +237,18 @@ class _SuccessScreenState extends ConsumerState<SuccessScreen>
         ),
       ],
     );
+  }
+
+  String _getUserName() {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      if (user.displayName != null && user.displayName!.trim().isNotEmpty) {
+        return user.displayName!;
+      }
+      if (user.email != null && user.email!.contains('@')) {
+        return user.email!.split('@').first;
+      }
+    }
+    return "Bạn";
   }
 }

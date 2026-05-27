@@ -6,12 +6,14 @@ class ReviewsTab extends StatelessWidget {
   final List<Review> reviews;
   final String cafeId;
   final String cafeName;
+  final Function(Review)? onReviewAdded;
 
   const ReviewsTab({
     super.key,
     required this.reviews,
     required this.cafeId,
     required this.cafeName,
+    this.onReviewAdded,
   });
 
   @override
@@ -22,76 +24,84 @@ class ReviewsTab extends StatelessWidget {
       averageRating = sum / reviews.length;
     }
 
-    return SingleChildScrollView(
-      padding: const EdgeInsets.only(top: 24, bottom: 100, left: 24, right: 24),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildRatingCard(averageRating),
-          const SizedBox(height: 48),
-          const Text(
-            'Nhật ký khách hàng',
-            style: TextStyle(
-              color: Color(0xFF553722),
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 32),
-          if (reviews.isEmpty)
-            const Padding(
-              padding: EdgeInsets.symmetric(vertical: 40),
-              child: Center(
-                child: Text(
-                  'Chưa có đánh giá nào cho quán này. Hãy là người đầu tiên chia sẻ cảm nhận!',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(color: Color(0xFF6D5B4F), fontSize: 16),
+    return Stack(
+      children: [
+        SingleChildScrollView(
+          padding: const EdgeInsets.only(top: 24, bottom: 100, left: 24, right: 24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildRatingCard(averageRating),
+              const SizedBox(height: 48),
+              const Text(
+                'Nhật ký khách hàng',
+                style: TextStyle(
+                  color: Color(0xFF553722),
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
-            )
-          else
-            ...reviews.map((item) {
-              return Padding(
-                padding: const EdgeInsets.only(bottom: 32),
-                child: Column(
-                  children: [
-                    _buildReviewerInfoRow(
-                      name: item.userName,
-                      title:
-                          'KHÁCH HÀNG THÂN THIẾT • ${item.dateTime.day}/${item.dateTime.month}/${item.dateTime.year}',
-                      userAvatar: item.userAvatar,
-                      rating: item.rating.round(),
+              const SizedBox(height: 32),
+              if (reviews.isEmpty)
+                const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 40),
+                  child: Center(
+                    child: Text(
+                      'Chưa có đánh giá nào cho quán này. Hãy là người đầu tiên chia sẻ cảm nhận!',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: Color(0xFF6D5B4F), fontSize: 16),
                     ),
-                    const SizedBox(height: 16),
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(24),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(24),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.02),
-                            blurRadius: 24,
-                            offset: const Offset(0, 8),
-                          ),
-                        ],
-                      ),
-                      child: Text(
-                        item.comment,
-                        style: const TextStyle(
-                          color: Color(0xFF553722),
-                          fontSize: 16,
-                          height: 1.5,
+                  ),
+                )
+              else
+                ...reviews.map((item) {
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 32),
+                    child: Column(
+                      children: [
+                        _buildReviewerInfoRow(
+                          name: item.userName,
+                          title:
+                              'KHÁCH HÀNG THÂN THIẾT • ${item.dateTime.day}/${item.dateTime.month}/${item.dateTime.year}',
+                          userAvatar: item.userAvatar,
+                          rating: item.rating.round(),
                         ),
-                      ),
+                        const SizedBox(height: 16),
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(24),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(24),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withValues(alpha: 0.02),
+                                blurRadius: 24,
+                                offset: const Offset(0, 8),
+                              ),
+                            ],
+                          ),
+                          child: Text(
+                            item.comment,
+                            style: const TextStyle(
+                              color: Color(0xFF553722),
+                              fontSize: 16,
+                              height: 1.5,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-              );
-            }),
-          const SizedBox(height: 48),
-          SizedBox(
+                  );
+                }),
+            ],
+          ),
+        ),
+        Positioned(
+          bottom: 24,
+          left: 24,
+          right: 24,
+          child: SizedBox(
             width: double.infinity,
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
@@ -100,9 +110,10 @@ class ReviewsTab extends StatelessWidget {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
                 ),
+                elevation: 4,
               ),
-              onPressed: () {
-                Navigator.push(
+              onPressed: () async {
+                final newReview = await Navigator.push<Review>(
                   context,
                   MaterialPageRoute(
                     builder: (context) => WriteReviewScreen(
@@ -111,6 +122,9 @@ class ReviewsTab extends StatelessWidget {
                     ),
                   ),
                 );
+                if (newReview != null && onReviewAdded != null) {
+                  onReviewAdded!(newReview);
+                }
               },
               child: const Text('Chia sẻ cảm nhận',
                   style: TextStyle(
@@ -119,8 +133,8 @@ class ReviewsTab extends StatelessWidget {
                       fontWeight: FontWeight.bold)),
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 

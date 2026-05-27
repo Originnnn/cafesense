@@ -19,6 +19,7 @@ import 'features/onboarding/presentation/success_screen.dart';
 import 'features/onboarding/presentation/value_priority_screen.dart';
 import 'features/onboarding/presentation/wifi_noise_screen.dart';
 import 'features/splash/presentation/cafe_sense_splash_page.dart';
+import 'features/profile/presentation/edit_profile_screen.dart';
 import 'core/theme/app_theme.dart';
 
 class CafeSenseApp extends ConsumerWidget {
@@ -53,6 +54,7 @@ class CafeSenseApp extends ConsumerWidget {
         AppRoutes.concept: (BuildContext context) => const ConceptScreen(),
         AppRoutes.success: (BuildContext context) => const SuccessScreen(),
         AppRoutes.mainApp: (BuildContext context) => const HomePage(),
+        AppRoutes.editProfile: (BuildContext context) => const EditProfileScreen(),
       },
     );
   }

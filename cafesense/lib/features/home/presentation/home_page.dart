@@ -4,6 +4,8 @@ import "package:cafesense/features/explore/presentation/explore_screen.dart";
 import "package:cafesense/features/match/presentation/match_screen.dart";
 import "package:cafesense/features/saved/presentation/saved_screen.dart";
 import "package:cafesense/features/profile/presentation/user_profile_screen.dart";
+import "package:cafesense/features/chat/presentation/ai_chat_screen.dart";
+import "package:cafesense/core/theme/app_colors.dart";
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -27,19 +29,13 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       body: Stack(
         children: [
-          // Smooth animated screen transition
-          AnimatedSwitcher(
-            duration: const Duration(milliseconds: 300),
-            transitionBuilder: (child, animation) {
-              return FadeTransition(opacity: animation, child: child);
-            },
-            child: KeyedSubtree(
-              key: ValueKey<int>(_currentIndex),
-              child: _screens[_currentIndex],
-            ),
+          // The selected tab's body
+          IndexedStack(
+            index: _currentIndex,
+            children: _screens,
           ),
 
-          // Bottom Navigation - always on top with proper pointer events
+          // Reusable Bottom Navigation overlays the content
           Positioned(
             left: 0,
             right: 0,
@@ -54,6 +50,19 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
         ],
+      ),
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(bottom: 70), // Tránh đè lên BottomNav
+        child: FloatingActionButton(
+          backgroundColor: AppColors.primary,
+          child: const Icon(Icons.auto_awesome, color: Colors.white),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const AiChatScreen()),
+            );
+          },
+        ),
       ),
     );
   }

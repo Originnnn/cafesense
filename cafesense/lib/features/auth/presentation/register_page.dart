@@ -78,7 +78,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
       );
 
       final authRepo = ref.read(authRepositoryProvider);
-      await authRepo.register(email, password);
+      await authRepo.register(name, email, password);
 
       if (!mounted) {
         return;

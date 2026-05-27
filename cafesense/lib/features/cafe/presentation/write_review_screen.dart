@@ -230,7 +230,7 @@ class _WriteReviewScreenState extends ConsumerState<WriteReviewScreen> {
                       duration: Duration(seconds: 1)),
                 );
 
-                await ref.read(cafeRepositoryProvider).postReview(
+                final review = await ref.read(cafeRepositoryProvider).postReview(
                       widget.cafeId,
                       _rating.toDouble(),
                       comment,
@@ -238,7 +238,7 @@ class _WriteReviewScreenState extends ConsumerState<WriteReviewScreen> {
 
                 if (!mounted) return;
 
-                Navigator.pop(context);
+                Navigator.pop(context, review);
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
                       content:

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 void main() => runApp(const CafeSenseApp());
 
@@ -94,14 +95,42 @@ class SettingsScreen extends StatelessWidget {
 
   // --- WIDGET HỖ TRỢ ---
   Widget _buildUserHeader(Color color) {
+    final user = FirebaseAuth.instance.currentUser;
+    String userName = user?.displayName ?? '';
+    if (userName.trim().isEmpty) {
+      userName = user?.email?.split('@').first ?? 'Người dùng';
+    }
+    final String userEmail = user?.email ?? 'Chưa cập nhật email';
+    final String initial = userName.isNotEmpty ? userName[0].toUpperCase() : 'U';
+
     return Row(
       children: [
-        const CircleAvatar(radius: 35, backgroundImage: NetworkImage('https://i.pravatar.cc/150?img=32')),
+        CircleAvatar(
+          radius: 35,
+          backgroundColor: color.withValues(alpha: 0.1),
+          child: Text(
+            initial,
+            style: TextStyle(
+              fontSize: 28,
+              fontWeight: FontWeight.bold,
+              color: color,
+            ),
+          ),
+        ),
         const SizedBox(width: 15),
-        Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text('Nguyễn Minh Anh', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: color)),
-          const Text('minhanh.ng@email.com', style: TextStyle(color: Colors.grey)),
-        ]),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(userName,
+                  style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: color)),
+              Text(userEmail, style: const TextStyle(color: Colors.grey)),
+            ],
+          ),
+        ),
       ],
     );
   }

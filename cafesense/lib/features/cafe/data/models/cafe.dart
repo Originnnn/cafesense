@@ -130,11 +130,13 @@ class MenuItem {
   final String name;
   final double price;
   final String category;
+  final String imageUrl;
 
   const MenuItem({
     required this.name,
     required this.price,
     required this.category,
+    this.imageUrl = '',
   });
 
   factory MenuItem.fromJson(Map<String, dynamic> json) {
@@ -142,6 +144,7 @@ class MenuItem {
       name: json['name'] as String? ?? '',
       price: (json['price'] as num?)?.toDouble() ?? 0.0,
       category: json['category'] as String? ?? '',
+      imageUrl: json['imageUrl'] as String? ?? '',
     );
   }
 
@@ -150,6 +153,7 @@ class MenuItem {
       'name': name,
       'price': price,
       'category': category,
+      'imageUrl': imageUrl,
     };
   }
 }

@@ -42,8 +42,9 @@ class MenuTab extends StatelessWidget {
                   description: 'Sản phẩm chất lượng cao phục vụ tại quán.',
                   chips: [item.category.toUpperCase()],
                   chipColor: chipColor,
-                  imageUrl:
-                      'https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=500&q=80',
+                  imageUrl: item.imageUrl.isNotEmpty
+                      ? item.imageUrl
+                      : 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=500&q=80',
                 ),
               );
             }),
@@ -126,12 +127,19 @@ class MenuTab extends StatelessWidget {
       children: [
         ClipRRect(
           borderRadius: BorderRadius.circular(24),
-          child: Image.network(
-            imageUrl,
-            height: 300,
-            width: double.infinity,
-            fit: BoxFit.cover,
-          ),
+          child: imageUrl.startsWith('http')
+              ? Image.network(
+                  imageUrl,
+                  height: 300,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                )
+              : Image.asset(
+                  imageUrl,
+                  height: 300,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                ),
         ),
         const SizedBox(height: 20),
         Row(

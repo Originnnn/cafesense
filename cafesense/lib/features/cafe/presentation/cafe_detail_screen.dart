@@ -4,8 +4,13 @@ import 'package:cafesense/features/cafe/data/models/cafe.dart';
 import 'package:cafesense/core/providers/favorites_provider.dart';
 import 'package:cafesense/core/providers/history_provider.dart';
 import 'cafe_menu_tab.dart';
-import 'cafe_reviews_tab.dart';
-import 'cafe_3d_space_screen.dart';
+import 'package:cafesense/features/cafe/presentation/cafe_reviews_tab.dart';
+import 'package:cafesense/features/cafe/presentation/cafe_3d_space_screen.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
+import 'package:cafesense/core/utils/map_utils.dart';
+import 'package:share_plus/share_plus.dart';
 
 class CafeDetailScreen extends ConsumerStatefulWidget {
   final Cafe cafe;
@@ -17,16 +22,53 @@ class CafeDetailScreen extends ConsumerStatefulWidget {
 }
 
 class _CafeDetailScreenState extends ConsumerState<CafeDetailScreen> {
+  late Cafe _cafe;
+
   @override
   void initState() {
     super.initState();
+    _cafe = widget.cafe;
     // Record this cafe view in history
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(historyProvider.notifier).addEntry(widget.cafe);
+      ref.read(historyProvider.notifier).addEntry(_cafe);
     });
   }
 
-  Cafe get cafe => widget.cafe;
+  void _handleReviewAdded(Review review) {
+    setState(() {
+      final updatedReviews = [review, ..._cafe.reviews];
+      _cafe = Cafe(
+        id: _cafe.id,
+        name: _cafe.name,
+        fullName: _cafe.fullName,
+        description: _cafe.description,
+        imageUrl: _cafe.imageUrl,
+        latitude: _cafe.latitude,
+        longitude: _cafe.longitude,
+        priceLabel: _cafe.priceLabel,
+        tagline: _cafe.tagline,
+        spaceStyle: _cafe.spaceStyle,
+        amenities: _cafe.amenities,
+        menu: _cafe.menu,
+        reviews: updatedReviews,
+        matchPercent: _cafe.matchPercent,
+        roastLevel: _cafe.roastLevel,
+        acidity: _cafe.acidity,
+        body: _cafe.body,
+        sweetness: _cafe.sweetness,
+        process: _cafe.process,
+        wifiRating: _cafe.wifiRating,
+        spaceRating: _cafe.spaceRating,
+        outletRating: _cafe.outletRating,
+        priceRating: _cafe.priceRating,
+        tasteRating: _cafe.tasteRating,
+        viewRating: _cafe.viewRating,
+        panoramaUrl: _cafe.panoramaUrl,
+      );
+    });
+  }
+
+  Cafe get cafe => _cafe;
 
   @override
   Widget build(BuildContext context) {
@@ -156,7 +198,11 @@ class _CafeDetailScreenState extends ConsumerState<CafeDetailScreen> {
               }),
               MenuTab(menu: cafe.menu),
               ReviewsTab(
-                  reviews: cafe.reviews, cafeId: cafe.id, cafeName: cafe.name),
+                reviews: cafe.reviews,
+                cafeId: cafe.id,
+                cafeName: cafe.name,
+                onReviewAdded: _handleReviewAdded,
+              ),
             ],
           ),
         ),
@@ -186,20 +232,19 @@ class _OverviewTab extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
+                Text(
                   'Câu chuyện của\nchúng tôi',
-                  style: TextStyle(
-                    color: Color(0xFF553722),
+                  style: GoogleFonts.notoSerif(
+                    color: const Color(0xFF553722),
                     fontSize: 32,
-                    fontFamily: 'Noto Serif',
                     height: 1.2,
                   ),
                 ),
                 const SizedBox(height: 24),
                 Text(
                   cafe.description,
-                  style: const TextStyle(
-                    color: Color(0xFF553722),
+                  style: GoogleFonts.beVietnamPro(
+                    color: const Color(0xFF553722),
                     fontSize: 16,
                     height: 1.5,
                   ),
@@ -355,8 +400,20 @@ class _OverviewTab extends StatelessWidget {
                   iconColor: isFav ? const Color(0xFFE05555) : null,
                 ),
               ),
-              _buildActionButton(Icons.share, 'Chia sẻ'),
-              _buildActionButtonPrimary(Icons.directions, 'Chỉ đường'),
+              InkWell(
+                borderRadius: BorderRadius.circular(24),
+                onTap: () {
+                  Share.share('Hãy đến quán ${cafe.name} cùng mình nhé! Không gian siêu đẹp: ${cafe.tagline}');
+                },
+                child: _buildActionButton(Icons.share, 'Chia sẻ'),
+              ),
+              InkWell(
+                borderRadius: BorderRadius.circular(24),
+                onTap: () {
+                  MapUtils.navigateTo(cafe.latitude, cafe.longitude);
+                },
+                child: _buildActionButtonPrimary(Icons.directions, 'Chỉ đường'),
+              ),
               InkWell(
                 borderRadius: BorderRadius.circular(24),
                 onTap: () {
@@ -567,13 +624,80 @@ class _OverviewTab extends StatelessWidget {
   }
 
   Widget _buildMapImage() {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(24),
-      child: Image.network(
-        'https://images.unsplash.com/photo-1524661135-423995f22d0b?w=500&q=80',
-        height: 240,
-        width: double.infinity,
-        fit: BoxFit.cover,
+    return Container(
+      height: 240,
+      width: double.infinity,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: const [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 10,
+            offset: Offset(0, 4),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(24),
+        child: Stack(
+          children: [
+            GestureDetector(
+              onTap: () {
+                MapUtils.navigateTo(cafe.latitude, cafe.longitude);
+              },
+              child: IgnorePointer(
+                child: FlutterMap(
+                  options: MapOptions(
+                    initialCenter: LatLng(cafe.latitude, cafe.longitude),
+                    initialZoom: 15.0,
+                    interactionOptions: const InteractionOptions(
+                      flags: InteractiveFlag.none,
+                    ),
+                  ),
+                  children: [
+                    TileLayer(
+                      urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                      userAgentPackageName: 'com.cafesense.app',
+                    ),
+                    MarkerLayer(
+                      markers: [
+                        Marker(
+                          point: LatLng(cafe.latitude, cafe.longitude),
+                          width: 40,
+                          height: 40,
+                          child: const Icon(
+                            Icons.location_on,
+                            color: Color(0xFF553722),
+                            size: 40,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Positioned(
+              bottom: 16,
+              right: 16,
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  MapUtils.navigateTo(cafe.latitude, cafe.longitude);
+                },
+                icon: const Icon(Icons.directions, size: 20),
+                label: const Text('Chỉ đường'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF553722),
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

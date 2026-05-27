@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import "package:cafesense/core/theme/app_colors.dart";
-import "package:cafesense/features/auth/presentation/login_page.dart";
+import "package:cafesense/features/onboarding/presentation/welcome_screen.dart";
 
 class SuccessPage extends StatelessWidget {
   const SuccessPage({super.key});
@@ -119,7 +119,7 @@ class SuccessPage extends StatelessWidget {
                                   Navigator.of(context).pushAndRemoveUntil(
                                     MaterialPageRoute<void>(
                                         builder: (BuildContext context) =>
-                                            const LoginPage()),
+                                            const WelcomeScreen()),
                                     (Route<dynamic> route) => false,
                                   );
                                 },

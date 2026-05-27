@@ -137,7 +137,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
             SingleChildScrollView(
               child: Padding(
                 padding:
-                    EdgeInsets.only(top: overlayBarHeight + 20, bottom: 120),
+                    EdgeInsets.only(top: overlayBarHeight + 20, bottom: 100),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [

@@ -11,6 +11,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:cafesense/core/providers/theme_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cafesense/features/auth/presentation/login_page.dart';
 import 'package:cafesense/features/settings/presentation/LogOut.dart'
     as settings;
@@ -42,7 +43,7 @@ class _MainAppScreenState extends ConsumerState<MainAppScreen> {
       backgroundColor: pageBg,
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(16, 12, 16, 120),
+          padding: const EdgeInsets.fromLTRB(16, 12, 16, 110),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -241,19 +242,31 @@ class _MainAppScreenState extends ConsumerState<MainAppScreen> {
   }
 
   Widget _buildUserHeader(Color title, Color subtitle) {
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: _darkMode ? AppColors.darkSurface : AppColors.surface,
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Row(
+    final user = FirebaseAuth.instance.currentUser;
+    String userName = user?.displayName ?? '';
+    if (userName.trim().isEmpty) {
+      userName = user?.email?.split('@').first ?? 'Người dùng';
+    }
+    final String userEmail = user?.email ?? 'Chưa cập nhật email';
+    final String initial = userName.isNotEmpty ? userName[0].toUpperCase() : 'U';
+
+    return GestureDetector(
+      onTap: () => Navigator.pushNamed(context, AppRoutes.editProfile).then((_) {
+        if (mounted) setState(() {});
+      }),
+      child: Container(
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: _darkMode ? AppColors.darkSurface : AppColors.surface,
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Row(
         children: [
           CircleAvatar(
             radius: 24,
             backgroundColor: AppColors.surfaceWarm,
             child: Text(
-              "N",
+              initial,
               style: GoogleFonts.beVietnamPro(
                 fontSize: 18,
                 fontWeight: FontWeight.w700,
@@ -267,7 +280,7 @@ class _MainAppScreenState extends ConsumerState<MainAppScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Nguyễn Minh Anh",
+                  userName,
                   style: GoogleFonts.beVietnamPro(
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
@@ -276,7 +289,7 @@ class _MainAppScreenState extends ConsumerState<MainAppScreen> {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  "minhanh.nguyen@gmail.com",
+                  userEmail,
                   style: GoogleFonts.beVietnamPro(
                     fontSize: 11,
                     color: subtitle,
@@ -285,12 +298,9 @@ class _MainAppScreenState extends ConsumerState<MainAppScreen> {
               ],
             ),
           ),
-          IconButton(
-            onPressed: () =>
-                Navigator.pushNamed(context, AppRoutes.editProfile),
-            icon: Icon(Icons.chevron_right_rounded, color: subtitle),
-          ),
+          const Icon(Icons.chevron_right_rounded),
         ],
+      ),
       ),
     );
   }
@@ -460,8 +470,9 @@ class _MainAppScreenState extends ConsumerState<MainAppScreen> {
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: () async {
+                      await FirebaseAuth.instance.signOut();
                       final prefs = await SharedPreferences.getInstance();
-                      await prefs.remove('token');
+                      await prefs.clear();
                       if (!context.mounted) return;
                       Navigator.pushAndRemoveUntil(
                         context,

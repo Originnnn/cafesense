@@ -17,7 +17,7 @@ class SavedScreen extends ConsumerWidget {
       backgroundColor: AppColors.backgroundLight,
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(16, 8, 16, 120),
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 100),
           child: favCafesAsync.when(
             loading: () => const Center(
               child: CircularProgressIndicator(color: AppColors.primary),

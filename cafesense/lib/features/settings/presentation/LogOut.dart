@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:cafesense/core/providers/theme_provider.dart';
@@ -93,16 +94,41 @@ class MainSettingsScreen extends ConsumerWidget {
   }
 
   Widget _buildUserHeader(Color textColor) {
+    final user = FirebaseAuth.instance.currentUser;
+    String userName = user?.displayName ?? '';
+    if (userName.trim().isEmpty) {
+      userName = user?.email?.split('@').first ?? 'Người dùng';
+    }
+    final String userEmail = user?.email ?? 'Chưa cập nhật email';
+    final String initial = userName.isNotEmpty ? userName[0].toUpperCase() : 'U';
+
     return Row(
       children: [
-        const CircleAvatar(radius: 35, backgroundImage: NetworkImage('https://i.pravatar.cc/150?img=32')),
+        CircleAvatar(
+          radius: 35,
+          backgroundColor: textColor.withValues(alpha: 0.1),
+          child: Text(
+            initial,
+            style: TextStyle(
+              fontSize: 28,
+              fontWeight: FontWeight.bold,
+              color: textColor,
+            ),
+          ),
+        ),
         const SizedBox(width: 15),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Nguyễn Minh Anh', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: textColor)),
-            const Text('minhanh.ng@email.com', style: TextStyle(color: Colors.grey)),
-          ],
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(userName,
+                  style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: textColor)),
+              Text(userEmail, style: const TextStyle(color: Colors.grey)),
+            ],
+          ),
         ),
       ],
     );
@@ -184,8 +210,9 @@ class MainSettingsScreen extends ConsumerWidget {
             const SizedBox(height: 30),
             ElevatedButton(
               onPressed: () async {
+                await FirebaseAuth.instance.signOut();
                 final prefs = await SharedPreferences.getInstance();
-                await prefs.remove('token');
+                await prefs.clear();
                 if (!context.mounted) return;
                 Navigator.pushAndRemoveUntil(
                   context,
